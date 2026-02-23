@@ -2,6 +2,7 @@
 import { Product } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
 import { ShoppingCart, Clock, Package } from 'lucide-react';
+import { trackEvent } from '@/lib/useAnalytics';
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -12,8 +13,17 @@ export default function ProductCard({ product }: { product: Product }) {
     decorative: 'bg-purple-100 text-purple-700',
   };
 
+  const handleAddToCart = () => {
+    addItem(product);
+    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price });
+  };
+
+  const handleView = () => {
+    trackEvent('product_viewed', { productId: product.id, productName: product.name, category: product.category });
+  };
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group" onClick={handleView}>
       <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center p-6">
@@ -44,7 +54,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="flex items-center justify-between">
           <span className="text-2xl font-bold text-gray-900">${product.price.toFixed(2)}</span>
           <button
-            onClick={() => addItem(product)}
+            onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
             className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-xl font-medium text-sm transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />

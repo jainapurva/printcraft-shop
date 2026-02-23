@@ -1,4 +1,5 @@
 'use client';
+import { trackEvent } from '@/lib/useAnalytics';
 import { useState } from 'react';
 import { Upload, CheckCircle, Loader2 } from 'lucide-react';
 
@@ -21,6 +22,7 @@ export default function QuotePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
+    trackEvent('quote_submitted', { material: form.material, color: form.color, quantity: form.quantity });
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([k, v]) => formData.append(k, String(v)));
