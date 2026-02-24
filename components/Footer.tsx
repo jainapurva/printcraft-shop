@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { Printer, Mail, Instagram, Twitter } from 'lucide-react';
+import Image from 'next/image';
+import { Mail, Instagram, Twitter } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -8,10 +9,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2.5 text-white font-bold text-xl mb-4">
-              <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
-                <Printer className="w-5 h-5 text-white" />
-              </div>
-              Appy's Studio
+              <Image src="/logo.png" alt="Appy's Studio" width={36} height={36} className="rounded-lg" />
+              Appy&apos;s Studio
             </div>
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
               High-quality 3D printed products made to order. From desk organizers to custom 3D printed objects — we&apos;ve shipped 4,000+ pieces and counting.
