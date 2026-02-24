@@ -195,7 +195,7 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
           <p>We've received your custom print request (<code style="background:#f3f4f6;padding:2px 6px;border-radius:4px">${quote.id}</code>) and will review your file shortly.</p>
           <div style="background:#eff6ff;border-left:4px solid #1d4ed8;padding:16px;margin:24px 0;border-radius:0 8px 8px 0">
             <p style="margin:0;font-size:14px"><strong>What happens next?</strong><br>
-            We'll review your STL, check printability, and send you a price quote + lead time estimate — typically within 24 hours.</p>
+            We'll review your file, check printability, and send you a price quote + lead time estimate — typically within 24 hours.</p>
           </div>
           <p style="font-size:14px;color:#6b7280">In the meantime, feel free to browse our <a href="${process.env.NEXT_PUBLIC_BASE_URL}/shop" style="color:#f97316">ready-made products</a>.</p>
           <p style="font-size:14px;color:#6b7280;margin-bottom:0">— The Appy's Studio Team</p>

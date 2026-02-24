@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Appy's Studio — Premium 3D Printed Products",
-  description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your STL files. 4,000+ pieces shipped.',
+  description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your 3D files. 4,000+ pieces shipped.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

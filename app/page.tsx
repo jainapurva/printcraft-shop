@@ -30,7 +30,7 @@ export default function Home() {
                   Shop Products <ArrowRight className="w-5 h-5" />
                 </a>
                 <a href="#custom" className="bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2">
-                  <Upload className="w-5 h-5" /> Upload Your STL
+                  <Upload className="w-5 h-5" /> Upload Your Design
                 </a>
               </div>
             </div>
@@ -107,9 +107,9 @@ export default function Home() {
               <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
                 <Upload className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-4 text-gray-900">Custom STL Print</h3>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">Custom 3D Print</h3>
               <ol className="space-y-3 text-gray-600 text-sm">
-                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Upload your STL file below</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Upload your 3D file below</span></li>
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Tell us material, color &amp; quantity</span></li>
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>We review and send you a quote + lead time</span></li>
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Approve and we start printing</span></li>
@@ -128,7 +128,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <p className="text-orange-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
             <h2 className="text-4xl font-extrabold text-white">Custom Print Quote</h2>
-            <p className="text-gray-400 mt-3 max-w-xl mx-auto">Upload your STL file and tell us what you need. We&apos;ll send you a price and lead time within 24 hours.</p>
+            <p className="text-gray-400 mt-3 max-w-xl mx-auto">Upload your 3D file and tell us what you need. We&apos;ll send you a price and lead time within 24 hours.</p>
           </div>
           <QuoteForm />
         </div>
@@ -144,7 +144,7 @@ export default function Home() {
           {[
             { q: 'What materials do you print with?', a: 'We primarily use PLA, PETG, TPU, and ASA. PLA is great for most indoor products, PETG for moisture resistance, TPU for flexible parts, and ASA for outdoor use.' },
             { q: 'How long does printing take?', a: "Most catalog items ship in 1-5 business days. Custom prints depend on complexity — we'll tell you the exact lead time in your quote." },
-            { q: 'What file formats do you accept for custom prints?', a: 'We accept STL, OBJ, and 3MF files. STL is the most common and preferred format.' },
+            { q: 'What file formats do you accept for custom prints?', a: 'We accept STL, OBJ, 3MF, STEP, IGES, FBX, PLY, AMF, and GCODE files. Most common 3D file formats are supported.' },
             { q: 'Do you offer bulk/wholesale pricing?', a: 'Yes! For orders of 10+ pieces we offer volume discounts. Contact us for a custom quote.' },
             { q: 'What colors are available?', a: 'We stock 20+ colors for most materials including black, white, grey, red, blue, green, orange, and more. Some specialty colors may require a small upcharge.' },
           ].map((faq, i) => (

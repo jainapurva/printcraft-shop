@@ -51,14 +51,14 @@ export default function QuoteForm() {
     <form onSubmit={handleSubmit} className="bg-gray-900 rounded-3xl border border-gray-800 p-8 space-y-6">
       {/* File Upload */}
       <div>
-        <label className="block text-sm font-bold text-gray-200 mb-2">STL File *</label>
+        <label className="block text-sm font-bold text-gray-200 mb-2">3D File *</label>
         <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-orange-500 transition-all bg-gray-800/50 hover:bg-gray-800 group">
           <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-orange-500/20 transition-colors ring-1 ring-orange-500/20">
             {file ? <FileUp className="w-6 h-6 text-orange-400" /> : <Upload className="w-6 h-6 text-orange-400" />}
           </div>
-          <span className="text-sm text-gray-300 font-medium">{file ? file.name : 'Click to upload STL / OBJ / 3MF'}</span>
+          <span className="text-sm text-gray-300 font-medium">{file ? file.name : 'Click to upload (STL, OBJ, 3MF, STEP, FBX, PLY, AMF...)'}</span>
           <span className="text-xs text-gray-500 mt-1">Max 50MB</span>
-          <input type="file" accept=".stl,.obj,.3mf" className="hidden" onChange={handleFile} />
+          <input type="file" accept=".stl,.obj,.3mf,.step,.stp,.iges,.igs,.fbx,.ply,.amf,.gcode" className="hidden" onChange={handleFile} />
         </label>
       </div>
 
