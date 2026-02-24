@@ -33,7 +33,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Shop</h4>
             <ul className="space-y-3 text-sm">
               <li><Link href="/#shop" className="hover:text-orange-400 transition-colors">All Products</Link></li>
-              <li><Link href="/#categories" className="hover:text-orange-400 transition-colors">Categories</Link></li>
+              <li><Link href="/#how" className="hover:text-orange-400 transition-colors">How It Works</Link></li>
               <li><Link href="/#custom" className="hover:text-orange-400 transition-colors">Custom Print</Link></li>
             </ul>
           </div>
