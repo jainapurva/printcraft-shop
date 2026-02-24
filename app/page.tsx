@@ -1,101 +1,165 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { products } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
-import { ArrowRight, Star, Upload, CheckCircle, Package } from 'lucide-react';
+import QuoteForm from '@/components/QuoteForm';
+import { ArrowRight, Star, Upload, CheckCircle, Package, Zap, Shield, Truck } from 'lucide-react';
 
 export default function Home() {
-  const featuredProducts = products.slice(0, 3);
-
   return (
-    <div>
+    <div className="bg-white">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-orange-50 via-white to-amber-50 pt-16 pb-24 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 text-sm font-medium px-4 py-2 rounded-full mb-6">
-            <Star className="w-4 h-4" />
-            400+ pieces shipped and counting
-          </div>
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
-            Precision 3D Prints,<br />
-            <span className="text-orange-500">Built to Order</span>
-          </h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10">
-            From desk organizers to custom STL prints — we make functional, beautiful 3D printed products with fast turnaround and real craftsmanship.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/shop" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2">
-              Shop Products <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link href="/quote" className="bg-white border-2 border-gray-200 hover:border-orange-300 text-gray-700 px-8 py-4 rounded-2xl font-bold text-lg transition-colors flex items-center justify-center gap-2">
-              <Upload className="w-5 h-5" /> Upload Your STL
-            </Link>
+      <section className="relative overflow-hidden bg-gray-950 pt-20 pb-28 px-4">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-600/20 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-600/10 via-transparent to-transparent" />
+        <div className="max-w-7xl mx-auto relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-orange-500/10 text-orange-400 text-sm font-semibold px-4 py-2 rounded-full mb-8 ring-1 ring-orange-500/20">
+                <Star className="w-4 h-4 fill-orange-400" />
+                400+ pieces shipped and counting
+              </div>
+              <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
+                Precision 3D Prints,{' '}
+                <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Built to Order</span>
+              </h1>
+              <p className="text-lg text-gray-400 max-w-lg mb-10 leading-relaxed">
+                From desk organizers to custom STL prints — we make functional, beautiful 3D printed products with fast turnaround and real craftsmanship.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="#shop" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">
+                  Shop Products <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link href="#custom" className="bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2">
+                  <Upload className="w-5 h-5" /> Upload Your STL
+                </Link>
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <div className="relative w-full aspect-square max-w-lg ml-auto">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-3xl rotate-3" />
+                <div className="relative w-full h-full rounded-3xl overflow-hidden ring-1 ring-white/10">
+                  <Image
+                    src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=800&fit=crop"
+                    alt="3D Printing"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="bg-gray-900 py-12 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <section className="bg-white py-16 px-4 border-b border-gray-100">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '400+', label: 'Pieces Shipped' },
-            { value: '3', label: 'Product Categories' },
-            { value: '1-5', label: 'Day Lead Time' },
-            { value: '5+', label: 'Materials Available' },
+            { value: '400+', label: 'Pieces Shipped', icon: Truck },
+            { value: '3', label: 'Product Categories', icon: Package },
+            { value: '1-5', label: 'Day Lead Time', icon: Zap },
+            { value: '5+', label: 'Materials Available', icon: Shield },
           ].map(s => (
-            <div key={s.label}>
-              <div className="text-3xl font-extrabold text-orange-400 mb-1">{s.value}</div>
-              <div className="text-gray-400 text-sm">{s.label}</div>
+            <div key={s.label} className="text-center">
+              <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <s.icon className="w-6 h-6 text-orange-500" />
+              </div>
+              <div className="text-3xl font-extrabold text-gray-900 mb-1">{s.value}</div>
+              <div className="text-gray-500 text-sm font-medium">{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
-            <p className="text-gray-500 mt-1">Our most popular ready-to-ship items</p>
-          </div>
-          <Link href="/shop" className="text-orange-500 font-semibold hover:underline flex items-center gap-1">
-            View all <ArrowRight className="w-4 h-4" />
-          </Link>
+      {/* Shop — All Products */}
+      <section id="shop" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 scroll-mt-20">
+        <div className="text-center mb-14">
+          <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Our Collection</p>
+          <h2 className="text-4xl font-extrabold text-gray-900">Shop Products</h2>
+          <p className="text-gray-500 mt-2 max-w-xl mx-auto">All our ready-to-ship 3D printed products — made fresh to order.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {featuredProducts.map(p => <ProductCard key={p.id} product={p} />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {products.map(p => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section id="categories" className="bg-gray-50 py-24 px-4 scroll-mt-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Categories</p>
+            <h2 className="text-4xl font-extrabold text-gray-900">What We Print</h2>
+            <p className="text-gray-500 mt-2 max-w-xl mx-auto">Everything is printed fresh to order — no stale warehouse inventory.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                title: 'Organizers',
+                desc: 'Desk organizers, drawer dividers, wall shelves, and storage solutions for every space.',
+                image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&h=400&fit=crop',
+                gradient: 'from-blue-600 to-blue-800',
+              },
+              {
+                title: 'Cable Management',
+                desc: 'Cable clips, raceways, monitor spines — keep your workspace tidy and cable-free.',
+                image: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&h=400&fit=crop',
+                gradient: 'from-emerald-600 to-emerald-800',
+              },
+              {
+                title: 'Decorative',
+                desc: 'Geometric vases, wall art panels, planters, and unique decor pieces for modern spaces.',
+                image: 'https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=600&h=400&fit=crop',
+                gradient: 'from-purple-600 to-purple-800',
+              },
+            ].map(c => (
+              <Link key={c.title} href="#shop" className="group relative rounded-3xl overflow-hidden aspect-[4/3]">
+                <Image src={c.image} alt={c.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className={`absolute inset-0 bg-gradient-to-t ${c.gradient} opacity-70 group-hover:opacity-80 transition-opacity`} />
+                <div className="absolute inset-0 p-8 flex flex-col justify-end">
+                  <h3 className="text-2xl font-bold text-white mb-2">{c.title}</h3>
+                  <p className="text-white/80 text-sm leading-relaxed">{c.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-gray-50 py-20 px-4">
+      <section className="py-24 px-4">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">How It Works</h2>
-          <p className="text-gray-500 text-center mb-12">Ordering is simple — whether you pick from our catalog or bring your own design.</p>
+          <div className="text-center mb-14">
+            <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Simple Process</p>
+            <h2 className="text-4xl font-extrabold text-gray-900">How It Works</h2>
+            <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Ordering is simple — whether you pick from our catalog or bring your own design.</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
-                <Package className="w-6 h-6 text-orange-500" />
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center mb-6">
+                <Package className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Order from Catalog</h3>
-              <ol className="space-y-2 text-gray-600 text-sm">
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Browse our product catalog</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Add items to cart, choose material &amp; color</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Place your order — we start printing</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Delivered in 1-5 days</li>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">Order from Catalog</h3>
+              <ol className="space-y-3 text-gray-600 text-sm">
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Browse our product catalog above</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Add items to cart, choose material &amp; color</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Place your order — we start printing</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Delivered in 1-5 days</span></li>
               </ol>
             </div>
-            <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                <Upload className="w-6 h-6 text-blue-500" />
+            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6">
+                <Upload className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Custom STL Print</h3>
-              <ol className="space-y-2 text-gray-600 text-sm">
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Upload your STL file</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Tell us material, color &amp; quantity</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />We review and send you a quote + lead time</li>
-                <li className="flex gap-2"><CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />Approve and we start printing</li>
+              <h3 className="text-xl font-bold mb-4 text-gray-900">Custom STL Print</h3>
+              <ol className="space-y-3 text-gray-600 text-sm">
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Upload your STL file below</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Tell us material, color &amp; quantity</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>We review and send you a quote + lead time</span></li>
+                <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Approve and we start printing</span></li>
               </ol>
-              <Link href="/quote" className="mt-5 inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
+              <Link href="#custom" className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-500/25">
                 Get a Quote <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -103,29 +167,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20" id="about">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-4">What We Print</h2>
-        <p className="text-gray-500 text-center mb-12">Everything is printed fresh to order — no stale warehouse inventory.</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { icon: '🗂️', title: 'Organizers', desc: 'Desk organizers, drawer dividers, wall shelves, and storage solutions for every space.', href: '/shop?cat=organizers' },
-            { icon: '🔌', title: 'Cable Management', desc: 'Cable clips, raceways, monitor spines — keep your workspace tidy and cable-free.', href: '/shop?cat=cable-management' },
-            { icon: '🎨', title: 'Decorative', desc: 'Geometric vases, wall art panels, planters, and unique decor pieces for modern spaces.', href: '/shop?cat=decorative' },
-          ].map(c => (
-            <Link key={c.title} href={c.href} className="group bg-white rounded-2xl p-8 border border-gray-100 shadow-sm hover:shadow-md hover:border-orange-200 transition-all">
-              <div className="text-4xl mb-3">{c.icon}</div>
-              <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">{c.title}</h3>
-              <p className="text-gray-500 text-sm">{c.desc}</p>
-            </Link>
-          ))}
+      {/* Custom Print Quote */}
+      <section id="custom" className="bg-gray-950 py-24 px-4 scroll-mt-20">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-blue-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
+            <h2 className="text-4xl font-extrabold text-white">Custom Print Quote</h2>
+            <p className="text-gray-400 mt-3 max-w-xl mx-auto">Upload your STL file and tell us what you need. We&apos;ll send you a price and lead time within 24 hours.</p>
+          </div>
+          <QuoteForm />
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="bg-gray-50 py-20 px-4" id="faq">
+      <section id="faq" className="bg-gray-50 py-24 px-4 scroll-mt-20">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">Frequently Asked Questions</h2>
+          <div className="text-center mb-12">
+            <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Support</p>
+            <h2 className="text-4xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
+          </div>
           {[
             { q: 'What materials do you print with?', a: 'We primarily use PLA, PETG, TPU, and ASA. PLA is great for most indoor products, PETG for moisture resistance, TPU for flexible parts, and ASA for outdoor use.' },
             { q: 'How long does printing take?', a: "Most catalog items ship in 1-5 business days. Custom prints depend on complexity — we'll tell you the exact lead time in your quote." },
@@ -133,21 +193,25 @@ export default function Home() {
             { q: 'Do you offer bulk/wholesale pricing?', a: 'Yes! For orders of 10+ pieces we offer volume discounts. Contact us for a custom quote.' },
             { q: 'What colors are available?', a: 'We stock 20+ colors for most materials including black, white, grey, red, blue, green, orange, and more. Some specialty colors may require a small upcharge.' },
           ].map((faq, i) => (
-            <div key={i} className="bg-white rounded-xl p-6 mb-3 border border-gray-100">
-              <h4 className="font-semibold text-gray-900 mb-2">{faq.q}</h4>
-              <p className="text-gray-500 text-sm">{faq.a}</p>
+            <div key={i} className="bg-white rounded-2xl p-6 mb-4 border border-gray-100 shadow-sm">
+              <h4 className="font-bold text-gray-900 mb-2">{faq.q}</h4>
+              <p className="text-gray-500 text-sm leading-relaxed">{faq.a}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-orange-500 py-16 px-4 text-center">
-        <h2 className="text-3xl font-bold text-white mb-3">Ready to print something amazing?</h2>
-        <p className="text-orange-100 mb-8 max-w-xl mx-auto">Browse our catalog or upload your own design. Fast turnaround, great quality.</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/shop" className="bg-white text-orange-500 px-8 py-3 rounded-xl font-bold hover:bg-orange-50 transition-colors">Shop Now</Link>
-          <Link href="/quote" className="border-2 border-white text-white px-8 py-3 rounded-xl font-bold hover:bg-orange-400 transition-colors">Custom Quote</Link>
+      <section className="relative overflow-hidden py-24 px-4">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent" />
+        <div className="relative text-center max-w-2xl mx-auto">
+          <h2 className="text-4xl font-extrabold text-white mb-4">Ready to print something amazing?</h2>
+          <p className="text-orange-100 mb-10 text-lg">Browse our catalog or upload your own design. Fast turnaround, great quality.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="#shop" className="bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-orange-50 transition-colors shadow-lg">Shop Now</Link>
+            <Link href="#custom" className="ring-2 ring-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/10 transition-colors">Custom Quote</Link>
+          </div>
         </div>
       </section>
     </div>
