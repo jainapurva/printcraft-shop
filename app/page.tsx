@@ -104,7 +104,7 @@ export default function Home() {
               </ol>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
                 <Upload className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-gray-900">Custom STL Print</h3>
@@ -114,7 +114,7 @@ export default function Home() {
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>We review and send you a quote + lead time</span></li>
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Approve and we start printing</span></li>
               </ol>
-              <a href="#custom" className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-blue-500/25">
+              <a href="#custom" className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-orange-500/25">
                 Get a Quote <ArrowRight className="w-4 h-4" />
               </a>
             </div>
@@ -126,7 +126,7 @@ export default function Home() {
       <section id="custom" className="bg-gray-950 py-24 px-4 scroll-mt-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-blue-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
+            <p className="text-orange-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
             <h2 className="text-4xl font-extrabold text-white">Custom Print Quote</h2>
             <p className="text-gray-400 mt-3 max-w-xl mx-auto">Upload your STL file and tell us what you need. We&apos;ll send you a price and lead time within 24 hours.</p>
           </div>

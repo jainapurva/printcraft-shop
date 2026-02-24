@@ -9,10 +9,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
 
   const categoryColors: Record<string, string> = {
-    organizers: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20',
-    'cable-management': 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20',
-    decorative: 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/20',
-    functional: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
+    organizers: 'bg-orange-500/10 text-orange-400 ring-1 ring-orange-500/20',
+    'cable-management': 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
+    decorative: 'bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/20',
+    functional: 'bg-orange-600/10 text-orange-300 ring-1 ring-orange-600/20',
   };
 
   const handleAddToCart = () => {

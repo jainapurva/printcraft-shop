@@ -117,7 +117,7 @@ export default function QuoteForm() {
       )}
 
       <button type="submit" disabled={status === 'submitting'}
-        className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 disabled:from-blue-400/50 disabled:to-indigo-400/50 text-white py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25">
+        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:from-orange-400/50 disabled:to-amber-400/50 text-white py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25">
         {status === 'submitting' ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</> : 'Request Quote'}
       </button>
 
