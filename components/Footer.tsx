@@ -14,7 +14,7 @@ export default function Footer() {
               Appy's Studio
             </div>
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
-              High-quality 3D printed products made to order. From desk organizers to custom STL prints — we&apos;ve shipped 4,000+ pieces and counting.
+              High-quality 3D printed products made to order. From desk organizers to custom 3D printed objects — we&apos;ve shipped 4,000+ pieces and counting.
             </p>
             <div className="flex gap-3 mt-5">
               <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">

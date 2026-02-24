@@ -23,7 +23,7 @@ export default function Home() {
                 <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Built to Order</span>
               </h1>
               <p className="text-lg text-gray-400 max-w-lg mb-10 leading-relaxed">
-                From desk organizers to custom STL prints — we make functional, beautiful 3D printed products with fast turnaround and real craftsmanship.
+                From desk organizers to custom 3D printed objects — we make functional, beautiful 3D printed products with fast turnaround and real craftsmanship. Send us your design to get a quote.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a href="#shop" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">
