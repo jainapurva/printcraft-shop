@@ -50,13 +50,13 @@ export default function CartPage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
         <div className="max-w-md text-center">
-          <div className="w-20 h-20 bg-orange-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-purple-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">📋</span>
           </div>
           <h2 className="text-2xl font-extrabold mb-3 text-gray-900">Order Received!</h2>
           <p className="text-gray-500 mb-2">Your order <code className="bg-gray-100 px-3 py-1 rounded-lg text-sm font-mono">{pendingOrder}</code> has been saved.</p>
           <p className="text-gray-400 text-sm mb-8">Online payments are coming soon. We&apos;ll reach out to arrange payment and confirm your order.</p>
-          <Link href="/shop" className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-orange-500/25 transition-all inline-block">Continue Shopping</Link>
+          <Link href="/shop" className="bg-gradient-to-r from-purple-500 to-purple-400 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-purple-500/25 transition-all inline-block">Continue Shopping</Link>
         </div>
       </div>
     );
@@ -71,7 +71,7 @@ export default function CartPage() {
           </div>
           <h2 className="text-2xl font-extrabold mb-3 text-gray-900">Your cart is empty</h2>
           <p className="text-gray-500 mb-8">Add some products to get started.</p>
-          <Link href="/shop" className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-orange-500/25 transition-all inline-block">Browse Products</Link>
+          <Link href="/shop" className="bg-gradient-to-r from-purple-500 to-purple-400 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-purple-500/25 transition-all inline-block">Browse Products</Link>
         </div>
       </div>
     );
@@ -118,12 +118,12 @@ export default function CartPage() {
               <div className="flex justify-between font-extrabold text-xl mb-6"><span>Total</span><span>${total.toFixed(2)}</span></div>
               <form onSubmit={handleCheckout} className="space-y-3">
                 <input required type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all" />
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 <input required type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent transition-all" />
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 {error && <p className="text-red-500 text-xs bg-red-50 p-3 rounded-lg">{error}</p>}
                 <button type="submit" disabled={loading}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:from-orange-300 disabled:to-amber-300 text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25">
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-amber-600 disabled:from-orange-300 disabled:to-purple-300 text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25">
                   <CreditCard className="w-4 h-4" />
                   {loading ? 'Processing...' : 'Place Order'}
                 </button>

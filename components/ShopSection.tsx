@@ -20,7 +20,7 @@ export default function ShopSection({ products }: { products: Product[] }) {
             onClick={() => setActiveCategory(c.id)}
             className={`px-6 py-2.5 rounded-xl font-semibold text-sm transition-all ${
               activeCategory === c.id
-                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/25'
+                ? 'bg-purple-500 text-white shadow-md shadow-purple-500/25'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
             }`}
           >

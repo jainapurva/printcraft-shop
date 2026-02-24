@@ -52,9 +52,9 @@ export default function QuoteForm() {
       {/* File Upload */}
       <div>
         <label className="block text-sm font-bold text-gray-200 mb-2">3D File *</label>
-        <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-orange-500 transition-all bg-gray-800/50 hover:bg-gray-800 group">
-          <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-orange-500/20 transition-colors ring-1 ring-orange-500/20">
-            {file ? <FileUp className="w-6 h-6 text-orange-400" /> : <Upload className="w-6 h-6 text-orange-400" />}
+        <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-2xl cursor-pointer hover:border-purple-500 transition-all bg-gray-800/50 hover:bg-gray-800 group">
+          <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-3 group-hover:bg-purple-500/20 transition-colors ring-1 ring-purple-500/20">
+            {file ? <FileUp className="w-6 h-6 text-purple-400" /> : <Upload className="w-6 h-6 text-purple-400" />}
           </div>
           <span className="text-sm text-gray-300 font-medium">{file ? file.name : 'Click to upload (STL, OBJ, 3MF, STEP, FBX, PLY, AMF...)'}</span>
           <span className="text-xs text-gray-500 mt-1">Max 50MB</span>
@@ -66,12 +66,12 @@ export default function QuoteForm() {
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Your Name *</label>
           <input required type="text" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="Jane Doe" />
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" placeholder="Jane Doe" />
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Email *</label>
           <input required type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="jane@example.com" />
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" placeholder="jane@example.com" />
         </div>
       </div>
 
@@ -79,12 +79,12 @@ export default function QuoteForm() {
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Phone (optional)</label>
           <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" placeholder="+1 555 000 0000" />
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" placeholder="+1 555 000 0000" />
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Quantity *</label>
           <input required type="number" min={1} value={form.quantity} onChange={e => setForm(p => ({ ...p, quantity: parseInt(e.target.value) }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all" />
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" />
         </div>
       </div>
 
@@ -92,14 +92,14 @@ export default function QuoteForm() {
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Material</label>
           <select value={form.material} onChange={e => setForm(p => ({ ...p, material: e.target.value }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
             {MATERIALS.map(m => <option key={m}>{m}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-sm font-bold text-gray-200 mb-1.5">Color</label>
           <select value={form.color} onChange={e => setForm(p => ({ ...p, color: e.target.value }))}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all">
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all">
             {COLORS.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
@@ -108,7 +108,7 @@ export default function QuoteForm() {
       <div>
         <label className="block text-sm font-bold text-gray-200 mb-1.5">Notes / Special Requirements</label>
         <textarea value={form.notes} onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
-          rows={4} className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none transition-all"
+          rows={4} className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
           placeholder="Any special requirements, infill preferences, surface finish requests, intended use, etc." />
       </div>
 
@@ -117,7 +117,7 @@ export default function QuoteForm() {
       )}
 
       <button type="submit" disabled={status === 'submitting'}
-        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 disabled:from-orange-400/50 disabled:to-amber-400/50 text-white py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25">
+        className="w-full bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-purple-500 disabled:from-purple-400/50 disabled:to-purple-400/50 text-white py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25">
         {status === 'submitting' ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</> : 'Request Quote'}
       </button>
 

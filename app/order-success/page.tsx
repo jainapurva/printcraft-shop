@@ -12,7 +12,7 @@ export default function OrderSuccess() {
         <p className="text-gray-500 mb-2 leading-relaxed">Payment received. We&apos;ll start printing your order right away.</p>
         <p className="text-gray-400 text-sm mb-10">You&apos;ll receive an email confirmation with your order details and tracking info once shipped.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/shop" className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-orange-500/25 transition-all">Continue Shopping</Link>
+          <Link href="/shop" className="bg-gradient-to-r from-purple-500 to-purple-400 text-white px-8 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-purple-500/25 transition-all">Continue Shopping</Link>
           <Link href="/" className="ring-2 ring-gray-200 hover:ring-gray-300 text-gray-700 px-8 py-3.5 rounded-xl font-bold transition-all">Back to Home</Link>
         </div>
       </div>

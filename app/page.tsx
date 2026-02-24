@@ -9,24 +9,24 @@ export default function Home() {
     <div className="bg-white">
       {/* Hero */}
       <section className="relative overflow-hidden bg-gray-950 pt-20 pb-28 px-4">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-600/20 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-amber-600/10 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent" />
         <div className="max-w-7xl mx-auto relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-orange-500/10 text-orange-400 text-sm font-semibold px-4 py-2 rounded-full mb-8 ring-1 ring-orange-500/20">
-                <Star className="w-4 h-4 fill-orange-400" />
+              <div className="inline-flex items-center gap-2 bg-purple-500/10 text-purple-300 text-sm font-semibold px-4 py-2 rounded-full mb-8 ring-1 ring-purple-500/20">
+                <Star className="w-4 h-4 fill-purple-300" />
                 4,000+ pieces shipped and counting
               </div>
               <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
                 Precision 3D Prints,{' '}
-                <span className="bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">Built to Order</span>
+                <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Built to Order</span>
               </h1>
               <p className="text-lg text-gray-400 max-w-lg mb-10 leading-relaxed">
                 From desk organizers to custom 3D printed objects — we make functional, beautiful 3D printed products with fast turnaround and real craftsmanship. Send us your design to get a quote.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a href="#shop" className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">
+                <a href="#shop" className="bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-purple-500 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40">
                   Shop Products <ArrowRight className="w-5 h-5" />
                 </a>
                 <a href="#custom" className="bg-white/5 ring-1 ring-white/10 hover:bg-white/10 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2">
@@ -36,7 +36,7 @@ export default function Home() {
             </div>
             <div className="hidden lg:block">
               <div className="relative w-full aspect-square max-w-lg ml-auto">
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-amber-500/20 rounded-3xl rotate-3" />
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-purple-400/20 rounded-3xl rotate-3" />
                 <div className="relative w-full h-full rounded-3xl overflow-hidden ring-1 ring-white/10">
                   <Image
                     src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=800&fit=crop"
@@ -62,8 +62,8 @@ export default function Home() {
             { value: '5+', label: 'Materials Available', icon: Shield },
           ].map(s => (
             <div key={s.label} className="text-center">
-              <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <s.icon className="w-6 h-6 text-orange-500" />
+              <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <s.icon className="w-6 h-6 text-purple-500" />
               </div>
               <div className="text-3xl font-extrabold text-gray-900 mb-1">{s.value}</div>
               <div className="text-gray-500 text-sm font-medium">{s.label}</div>
@@ -75,7 +75,7 @@ export default function Home() {
       {/* Shop — Products with category tabs */}
       <section id="shop" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 scroll-mt-20">
         <div className="text-center mb-12">
-          <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Our Collection</p>
+          <p className="text-purple-500 font-semibold text-sm uppercase tracking-wider mb-2">Our Collection</p>
           <h2 className="text-4xl font-extrabold text-gray-900">Shop Products</h2>
           <p className="text-gray-500 mt-2 max-w-xl mx-auto">Browse our catalog of ready-to-print items — made fresh to order.</p>
         </div>
@@ -86,13 +86,13 @@ export default function Home() {
       <section id="how" className="bg-gray-50 py-24 px-4 scroll-mt-20">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Simple Process</p>
+            <p className="text-purple-500 font-semibold text-sm uppercase tracking-wider mb-2">Simple Process</p>
             <h2 className="text-4xl font-extrabold text-gray-900">How It Works</h2>
             <p className="text-gray-500 mt-2 max-w-2xl mx-auto">Ordering is simple — whether you pick from our catalog or bring your own design.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-amber-400 rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-400 rounded-2xl flex items-center justify-center mb-6">
                 <Package className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-gray-900">Order from Catalog</h3>
@@ -104,7 +104,7 @@ export default function Home() {
               </ol>
             </div>
             <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-              <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-400 rounded-2xl flex items-center justify-center mb-6">
                 <Upload className="w-7 h-7 text-white" />
               </div>
               <h3 className="text-xl font-bold mb-4 text-gray-900">Custom 3D Print</h3>
@@ -114,7 +114,7 @@ export default function Home() {
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>We review and send you a quote + lead time</span></li>
                 <li className="flex gap-3"><CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" /><span>Approve and we start printing</span></li>
               </ol>
-              <a href="#custom" className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-orange-500/25">
+              <a href="#custom" className="mt-6 inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-purple-500 text-white px-6 py-3 rounded-xl font-semibold text-sm transition-all shadow-lg shadow-purple-500/25">
                 Get a Quote <ArrowRight className="w-4 h-4" />
               </a>
             </div>
@@ -126,7 +126,7 @@ export default function Home() {
       <section id="custom" className="bg-gray-950 py-24 px-4 scroll-mt-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-orange-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
+            <p className="text-purple-400 font-semibold text-sm uppercase tracking-wider mb-2">Custom</p>
             <h2 className="text-4xl font-extrabold text-white">Custom Print Quote</h2>
             <p className="text-gray-400 mt-3 max-w-xl mx-auto">Upload your 3D file and tell us what you need. We&apos;ll send you a price and lead time within 24 hours.</p>
           </div>
@@ -138,7 +138,7 @@ export default function Home() {
       <section id="faq" className="bg-gray-50 py-24 px-4 scroll-mt-20">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <p className="text-orange-500 font-semibold text-sm uppercase tracking-wider mb-2">Support</p>
+            <p className="text-purple-500 font-semibold text-sm uppercase tracking-wider mb-2">Support</p>
             <h2 className="text-4xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
           </div>
           {[
@@ -158,13 +158,13 @@ export default function Home() {
 
       {/* CTA */}
       <section className="relative overflow-hidden py-24 px-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-400" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent" />
         <div className="relative text-center max-w-2xl mx-auto">
           <h2 className="text-4xl font-extrabold text-white mb-4">Ready to print something amazing?</h2>
-          <p className="text-orange-100 mb-10 text-lg">Browse our catalog or upload your own design. Fast turnaround, great quality.</p>
+          <p className="text-purple-100 mb-10 text-lg">Browse our catalog or upload your own design. Fast turnaround, great quality.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="#shop" className="bg-white text-orange-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-orange-50 transition-colors shadow-lg">Shop Now</a>
+            <a href="#shop" className="bg-white text-purple-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-purple-50 transition-colors shadow-lg">Shop Now</a>
             <a href="#custom" className="ring-2 ring-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/10 transition-colors">Custom Quote</a>
           </div>
         </div>

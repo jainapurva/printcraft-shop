@@ -9,10 +9,10 @@ export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
 
   const categoryColors: Record<string, string> = {
-    organizers: 'bg-orange-500/10 text-orange-400 ring-1 ring-orange-500/20',
-    'cable-management': 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
-    decorative: 'bg-yellow-500/10 text-yellow-400 ring-1 ring-yellow-500/20',
-    functional: 'bg-orange-600/10 text-orange-300 ring-1 ring-orange-600/20',
+    organizers: 'bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20',
+    'cable-management': 'bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20',
+    decorative: 'bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20',
+    functional: 'bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20',
   };
 
   const handleAddToCart = () => {
@@ -62,7 +62,7 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
           <button
             onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
-            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-orange-500/25 active:scale-95"
+            className="flex items-center gap-2 bg-purple-500 hover:bg-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm transition-all hover:shadow-lg hover:shadow-purple-500/25 active:scale-95"
           >
             <ShoppingCart className="w-4 h-4" />
             Add to Cart

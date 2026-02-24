@@ -21,7 +21,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2.5 font-bold text-xl text-white">
-            <Image src="/logo.png" alt="Appy's Studio" width={36} height={36} className="rounded-lg" />
+            <Image src="/logo.png" alt="Appy's Studio" width={36} height={36} className="rounded-md" />
             Appy&apos;s Studio
           </Link>
 
@@ -37,7 +37,7 @@ export default function Navbar() {
             <Link href="/cart" className="relative p-2.5 text-gray-300 hover:text-white hover:bg-white/10 rounded-xl transition-all">
               <ShoppingCart className="w-5 h-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold ring-2 ring-gray-950">
+                <span className="absolute -top-0.5 -right-0.5 bg-purple-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold ring-2 ring-gray-950">
                   {itemCount}
                 </span>
               )}

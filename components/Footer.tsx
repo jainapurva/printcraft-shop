@@ -9,20 +9,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2.5 text-white font-bold text-xl mb-4">
-              <Image src="/logo.png" alt="Appy's Studio" width={36} height={36} className="rounded-lg" />
+              <Image src="/logo.png" alt="Appy's Studio" width={36} height={36} className="rounded-md" />
               Appy&apos;s Studio
             </div>
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
               High-quality 3D printed products made to order. From desk organizers to custom 3D printed objects — we&apos;ve shipped 4,000+ pieces and counting.
             </p>
             <div className="flex gap-3 mt-5">
-              <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
+              <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-purple-500 rounded-xl flex items-center justify-center transition-colors">
                 <Mail className="w-4 h-4" />
               </a>
-              <a href="https://www.instagram.com/appysstudio/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/appysstudio/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-purple-500 rounded-xl flex items-center justify-center transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
+              <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-purple-500 rounded-xl flex items-center justify-center transition-colors">
                 <Twitter className="w-4 h-4" />
               </a>
             </div>
@@ -31,17 +31,17 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Shop</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/#shop" className="hover:text-orange-400 transition-colors">All Products</Link></li>
-              <li><Link href="/#how" className="hover:text-orange-400 transition-colors">How It Works</Link></li>
-              <li><Link href="/#custom" className="hover:text-orange-400 transition-colors">Custom Print</Link></li>
+              <li><Link href="/#shop" className="hover:text-purple-400 transition-colors">All Products</Link></li>
+              <li><Link href="/#how" className="hover:text-purple-400 transition-colors">How It Works</Link></li>
+              <li><Link href="/#custom" className="hover:text-purple-400 transition-colors">Custom Print</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Info</h4>
             <ul className="space-y-3 text-sm">
-              <li><Link href="/#faq" className="hover:text-orange-400 transition-colors">FAQ</Link></li>
-              <li><a href="mailto:appysstudioca@gmail.com" className="hover:text-orange-400 transition-colors">Contact</a></li>
+              <li><Link href="/#faq" className="hover:text-purple-400 transition-colors">FAQ</Link></li>
+              <li><a href="mailto:appysstudioca@gmail.com" className="hover:text-purple-400 transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
