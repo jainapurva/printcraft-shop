@@ -35,22 +35,23 @@ Stripe handles checkout and order payments.
 
 ---
 
-### 2. Set up Resend (Emails)
-Resend sends order confirmations and quote request emails.
+### 2. Set up Gmail (Emails)
+Emails (order confirmations, quote notifications) are sent via Gmail using Nodemailer.
 
-- [ ] Create an account at https://resend.com
-- [ ] Go to **API Keys** and create a new key
-- [ ] (Optional) Add and verify your domain under **Domains** for custom sender address
+- [ ] Enable **2-Step Verification** on the Gmail account: https://myaccount.google.com/signinoptions/two-step-verification
+- [ ] Generate an **App Password**: https://myaccount.google.com/apppasswords
+  - Select app: "Mail", device: "Other" (enter "PrintCraft")
+  - Copy the 16-character password
 
 **Update in Vercel:**
 
 | Variable | Value |
 |----------|-------|
-| `RESEND_API_KEY` | `re_...` |
-| `FROM_EMAIL` | `PrintCraft <orders@yourdomain.com>` (optional, defaults to `PrintCraft <orders@printcraft.co>`) |
+| `GMAIL_USER` | Your Gmail address (e.g. `apurvajain.kota@gmail.com`) |
+| `GMAIL_APP_PASSWORD` | The 16-character app password from above |
 | `OWNER_EMAIL` | Your email for order notifications (optional, defaults to `apurvajain.kota@gmail.com`) |
 
-> **Note:** Without a verified domain, Resend only lets you send to your own email. Verify a domain to send to customers.
+> **Note:** Emails will be sent from the Gmail address. No domain verification needed.
 
 ---
 
@@ -93,7 +94,7 @@ The `/admin` page is protected by a password.
 | Service | What it does | Sign up |
 |---------|-------------|---------|
 | Stripe | Payments & checkout | https://dashboard.stripe.com/register |
-| Resend | Transactional emails | https://resend.com |
+| Gmail | Transactional emails | Your own Gmail account |
 | Vercel | Hosting (already done) | Already set up |
 
 ---
@@ -104,7 +105,8 @@ The `/admin` page is protected by a password.
 STRIPE_SECRET_KEY=placeholder
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=placeholder
 STRIPE_WEBHOOK_SECRET=placeholder
-RESEND_API_KEY=placeholder
+GMAIL_USER=placeholder
+GMAIL_APP_PASSWORD=placeholder
 NEXT_PUBLIC_BASE_URL=https://3dprints-shop.vercel.app
 ADMIN_PASSWORD=printcraft2025
 ```

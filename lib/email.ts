@@ -1,13 +1,21 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
-let _resend: Resend;
-function getResend() {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
-  return _resend;
+let _transporter: nodemailer.Transporter;
+function getTransporter() {
+  if (!_transporter) {
+    _transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+  }
+  return _transporter;
 }
 
-const OWNER_EMAIL = process.env.OWNER_EMAIL || 'apurvajain.kota@gmail.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'PrintCraft <orders@printcraft.co>';
+const OWNER_EMAIL = process.env.OWNER_EMAIL || 'appysstudioca@gmail.com';
+const FROM_EMAIL = process.env.GMAIL_USER || 'apurvajain.kota@gmail.com';
 
 export async function sendOrderConfirmationToCustomer(order: {
   customerName: string;
@@ -25,8 +33,8 @@ export async function sendOrderConfirmationToCustomer(order: {
       </tr>`)
     .join('');
 
-  await getResend().emails.send({
-    from: FROM_EMAIL,
+  await getTransporter().sendMail({
+    from: `PrintCraft <${FROM_EMAIL}>`,
     to: order.customerEmail,
     subject: `Order Confirmed — ${order.orderId}`,
     html: `
@@ -37,7 +45,7 @@ export async function sendOrderConfirmationToCustomer(order: {
         <div style="background:#fff;padding:32px;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 12px 12px">
           <p style="margin-top:0">Hi <strong>${order.customerName}</strong>,</p>
           <p>Your order has been confirmed and we're getting started on printing! Here's your summary:</p>
-          
+
           <div style="background:#f9fafb;border-radius:8px;padding:20px;margin:20px 0">
             <p style="margin:0 0 4px 0;font-size:12px;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em">Order ID</p>
             <p style="margin:0;font-weight:600;font-family:monospace">${order.orderId}</p>
@@ -85,8 +93,8 @@ export async function sendNewOrderNotificationToOwner(order: {
     .map(i => `• ${i.productName} × ${i.quantity} = $${(i.price * i.quantity).toFixed(2)}`)
     .join('\n');
 
-  await getResend().emails.send({
-    from: FROM_EMAIL,
+  await getTransporter().sendMail({
+    from: `PrintCraft <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `🛒 New Order: ${order.orderId} — $${order.totalAmount.toFixed(2)}`,
     html: `
@@ -129,8 +137,8 @@ export async function sendQuoteRequestNotificationToOwner(quote: {
   quantity: number;
   notes: string;
 }) {
-  await getResend().emails.send({
-    from: FROM_EMAIL,
+  await getTransporter().sendMail({
+    from: `PrintCraft <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `📐 New Quote Request: ${quote.id} from ${quote.customerName}`,
     html: `
@@ -173,8 +181,8 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
   customerEmail: string;
   id: string;
 }) {
-  await getResend().emails.send({
-    from: FROM_EMAIL,
+  await getTransporter().sendMail({
+    from: `PrintCraft <${FROM_EMAIL}>`,
     to: quote.customerEmail,
     subject: `Quote Request Received — ${quote.id}`,
     html: `
