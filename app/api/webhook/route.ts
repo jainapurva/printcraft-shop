@@ -3,9 +3,11 @@ import Stripe from 'stripe';
 import { getDB, saveDB } from '@/lib/orders';
 import { sendOrderConfirmationToCustomer, sendNewOrderNotificationToOwner } from '@/lib/email';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-01-28.clover',
-});
+let _stripe: Stripe;
+function getStripe() {
+  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
+  return _stripe;
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -13,7 +15,7 @@ export async function POST(req: NextRequest) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch {
     return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
   }
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as Stripe.Checkout.Session;
 
     // Retrieve full session with line items; cast away the Response<> wrapper
-    const fullSession = (await stripe.checkout.sessions.retrieve(session.id, {
+    const fullSession = (await getStripe().checkout.sessions.retrieve(session.id, {
       expand: ['line_items'],
     })) as unknown as Stripe.Checkout.Session;
 

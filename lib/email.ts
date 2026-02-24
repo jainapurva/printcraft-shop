@@ -1,6 +1,10 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend;
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'apurvajain.kota@gmail.com';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'PrintCraft <orders@printcraft.co>';
@@ -21,7 +25,7 @@ export async function sendOrderConfirmationToCustomer(order: {
       </tr>`)
     .join('');
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: order.customerEmail,
     subject: `Order Confirmed — ${order.orderId}`,
@@ -81,7 +85,7 @@ export async function sendNewOrderNotificationToOwner(order: {
     .map(i => `• ${i.productName} × ${i.quantity} = $${(i.price * i.quantity).toFixed(2)}`)
     .join('\n');
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: OWNER_EMAIL,
     subject: `🛒 New Order: ${order.orderId} — $${order.totalAmount.toFixed(2)}`,
@@ -125,7 +129,7 @@ export async function sendQuoteRequestNotificationToOwner(quote: {
   quantity: number;
   notes: string;
 }) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: OWNER_EMAIL,
     subject: `📐 New Quote Request: ${quote.id} from ${quote.customerName}`,
@@ -169,7 +173,7 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
   customerEmail: string;
   id: string;
 }) {
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: quote.customerEmail,
     subject: `Quote Request Received — ${quote.id}`,
