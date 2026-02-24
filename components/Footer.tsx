@@ -11,7 +11,7 @@ export default function Footer() {
               <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
                 <Printer className="w-5 h-5 text-white" />
               </div>
-              Apurva's Studio
+              Appy's Studio
             </div>
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
               High-quality 3D printed products made to order. From desk organizers to custom STL prints — we&apos;ve shipped 4,000+ pieces and counting.
@@ -48,7 +48,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-gray-600 flex flex-col sm:flex-row justify-between gap-2">
-          <p>&copy; {new Date().getFullYear()} Apurva's Studio. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Appy's Studio. All rights reserved.</p>
           <p>Made with precision, printed with care.</p>
         </div>
       </div>
