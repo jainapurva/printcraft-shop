@@ -23,7 +23,7 @@ export default function Navbar() {
             <div className="w-9 h-9 bg-gradient-to-br from-orange-500 to-amber-400 rounded-xl flex items-center justify-center">
               <Printer className="w-5 h-5 text-white" />
             </div>
-            PrintCraft
+            Apurva's Studio
           </Link>
 
           <div className="hidden md:flex items-center gap-1">

@@ -16,7 +16,7 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 bg-orange-500/10 text-orange-400 text-sm font-semibold px-4 py-2 rounded-full mb-8 ring-1 ring-orange-500/20">
                 <Star className="w-4 h-4 fill-orange-400" />
-                400+ pieces shipped and counting
+                4,000+ pieces shipped and counting
               </div>
               <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">
                 Precision 3D Prints,{' '}
@@ -56,8 +56,8 @@ export default function Home() {
       <section className="bg-white py-16 px-4 border-b border-gray-100">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { value: '400+', label: 'Pieces Shipped', icon: Truck },
-            { value: '3', label: 'Product Categories', icon: Package },
+            { value: '4,000+', label: 'Pieces Shipped', icon: Truck },
+            { value: '4', label: 'Product Categories', icon: Package },
             { value: '1-5', label: 'Day Lead Time', icon: Zap },
             { value: '5+', label: 'Materials Available', icon: Shield },
           ].map(s => (

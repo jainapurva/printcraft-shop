@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const lineItems = items.map((item: { productName: string; price: number; quantity: number }) => ({
       price_data: {
         currency: 'usd',
-        product_data: { name: item.productName, description: '3D Printed Product by PrintCraft' },
+        product_data: { name: item.productName, description: "3D Printed Product by Apurva's Studio" },
         unit_amount: Math.round(item.price * 100),
       },
       quantity: item.quantity,

@@ -34,7 +34,7 @@ export async function sendOrderConfirmationToCustomer(order: {
     .join('');
 
   await getTransporter().sendMail({
-    from: `PrintCraft <${FROM_EMAIL}>`,
+    from: `Apurva's Studio <${FROM_EMAIL}>`,
     to: order.customerEmail,
     subject: `Order Confirmed — ${order.orderId}`,
     html: `
@@ -74,7 +74,7 @@ export async function sendOrderConfirmationToCustomer(order: {
           </div>
 
           <p style="font-size:14px;color:#6b7280">Questions? Reply to this email or reach us at <a href="mailto:${OWNER_EMAIL}" style="color:#f97316">${OWNER_EMAIL}</a></p>
-          <p style="font-size:14px;color:#6b7280;margin-bottom:0">— The PrintCraft Team</p>
+          <p style="font-size:14px;color:#6b7280;margin-bottom:0">— The Apurva's Studio Team</p>
         </div>
       </div>
     `,
@@ -94,7 +94,7 @@ export async function sendNewOrderNotificationToOwner(order: {
     .join('\n');
 
   await getTransporter().sendMail({
-    from: `PrintCraft <${FROM_EMAIL}>`,
+    from: `Apurva's Studio <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `🛒 New Order: ${order.orderId} — $${order.totalAmount.toFixed(2)}`,
     html: `
@@ -138,7 +138,7 @@ export async function sendQuoteRequestNotificationToOwner(quote: {
   notes: string;
 }) {
   await getTransporter().sendMail({
-    from: `PrintCraft <${FROM_EMAIL}>`,
+    from: `Apurva's Studio <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `📐 New Quote Request: ${quote.id} from ${quote.customerName}`,
     html: `
@@ -182,7 +182,7 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
   id: string;
 }) {
   await getTransporter().sendMail({
-    from: `PrintCraft <${FROM_EMAIL}>`,
+    from: `Apurva's Studio <${FROM_EMAIL}>`,
     to: quote.customerEmail,
     subject: `Quote Request Received — ${quote.id}`,
     html: `
@@ -198,7 +198,7 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
             We'll review your STL, check printability, and send you a price quote + lead time estimate — typically within 24 hours.</p>
           </div>
           <p style="font-size:14px;color:#6b7280">In the meantime, feel free to browse our <a href="${process.env.NEXT_PUBLIC_BASE_URL}/shop" style="color:#f97316">ready-made products</a>.</p>
-          <p style="font-size:14px;color:#6b7280;margin-bottom:0">— The PrintCraft Team</p>
+          <p style="font-size:14px;color:#6b7280;margin-bottom:0">— The Apurva's Studio Team</p>
         </div>
       </div>
     `,

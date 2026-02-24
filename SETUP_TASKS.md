@@ -1,4 +1,4 @@
-# PrintCraft Shop — Setup Tasks
+# Apurva's Studio Shop — Setup Tasks
 
 Your shop is live at: **https://3dprints-shop.vercel.app**
 GitHub repo: **https://github.com/jainapurva/printcraft-shop**
@@ -40,7 +40,7 @@ Emails (order confirmations, quote notifications) are sent via Gmail using Nodem
 
 - [ ] Enable **2-Step Verification** on the Gmail account: https://myaccount.google.com/signinoptions/two-step-verification
 - [ ] Generate an **App Password**: https://myaccount.google.com/apppasswords
-  - Select app: "Mail", device: "Other" (enter "PrintCraft")
+  - Select app: "Mail", device: "Other" (enter "Apurva's Studio")
   - Copy the 16-character password
 
 **Update in Vercel:**

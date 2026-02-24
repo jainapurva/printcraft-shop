@@ -10,8 +10,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'PrintCraft — Premium 3D Printed Products',
-  description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your STL files. 400+ pieces shipped.',
+  title: "Apurva's Studio — Premium 3D Printed Products",
+  description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your STL files. 4,000+ pieces shipped.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

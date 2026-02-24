@@ -12,6 +12,7 @@ export default function ProductCard({ product }: { product: Product }) {
     organizers: 'bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20',
     'cable-management': 'bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20',
     decorative: 'bg-purple-500/10 text-purple-400 ring-1 ring-purple-500/20',
+    functional: 'bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20',
   };
 
   const handleAddToCart = () => {

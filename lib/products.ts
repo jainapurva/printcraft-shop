@@ -1,7 +1,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'organizers' | 'cable-management' | 'decorative' | 'custom';
+  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'custom';
   price: number;
   description: string;
   features: string[];
@@ -120,6 +120,42 @@ export const products: Product[] = [
     leadTime: '2-3 days',
     materials: ['PETG', 'ASA'],
   },
+  {
+    id: 'phone-stand',
+    name: 'Adjustable Phone Stand',
+    category: 'functional',
+    price: 14.99,
+    description: 'Sturdy adjustable phone stand with multiple viewing angles. Works with all phone sizes and most cases.',
+    features: ['3 angle positions', 'Non-slip grip pads', 'Foldable design', 'Supports up to 12" tablets'],
+    image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=600&h=600&fit=crop',
+    inStock: true,
+    leadTime: '1-2 days',
+    materials: ['PLA', 'PETG'],
+  },
+  {
+    id: 'tool-holder',
+    name: 'Modular Tool Holder',
+    category: 'functional',
+    price: 19.99,
+    description: 'Wall-mounted modular tool holder system for garages and workshops. Snap-in slots for screwdrivers, pliers, and wrenches.',
+    features: ['8 tool slots', 'Wall-mount ready', 'Snap-in design', 'Expandable modules'],
+    image: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=600&h=600&fit=crop',
+    inStock: true,
+    leadTime: '2-3 days',
+    materials: ['PETG', 'ASA'],
+  },
+  {
+    id: 'hinge-bracket',
+    name: 'Custom Hinge & Bracket Set',
+    category: 'functional',
+    price: 16.99,
+    description: 'Heavy-duty 3D printed hinges and L-brackets for DIY furniture, enclosures, and repair projects.',
+    features: ['4 hinges + 4 brackets', 'High-strength PETG', 'M4 bolt compatible', 'Load-tested to 5kg'],
+    image: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&h=600&fit=crop',
+    inStock: true,
+    leadTime: '2-3 days',
+    materials: ['PETG', 'ASA'],
+  },
 ];
 
 export const categories = [
@@ -127,4 +163,5 @@ export const categories = [
   { id: 'organizers', label: 'Organizers' },
   { id: 'cable-management', label: 'Cable Management' },
   { id: 'decorative', label: 'Decorative' },
+  { id: 'functional', label: 'Functional Parts' },
 ];
