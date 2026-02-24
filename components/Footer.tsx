@@ -20,7 +20,7 @@ export default function Footer() {
               <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
                 <Mail className="w-4 h-4" />
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
+              <a href="https://www.instagram.com/appysstudio/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
                 <Instagram className="w-4 h-4" />
               </a>
               <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
