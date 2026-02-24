@@ -17,7 +17,7 @@ export default function Footer() {
               High-quality 3D printed products made to order. From desk organizers to custom STL prints — we&apos;ve shipped 400+ pieces and counting.
             </p>
             <div className="flex gap-3 mt-5">
-              <a href="mailto:hello@printcraft.co" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
+              <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
                 <Mail className="w-4 h-4" />
               </a>
               <a href="#" className="w-10 h-10 bg-gray-800 hover:bg-orange-500 rounded-xl flex items-center justify-center transition-colors">
@@ -42,7 +42,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Info</h4>
             <ul className="space-y-3 text-sm">
               <li><Link href="/#faq" className="hover:text-orange-400 transition-colors">FAQ</Link></li>
-              <li><a href="mailto:hello@printcraft.co" className="hover:text-orange-400 transition-colors">Contact</a></li>
+              <li><a href="mailto:appysstudioca@gmail.com" className="hover:text-orange-400 transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>

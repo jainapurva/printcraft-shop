@@ -121,7 +121,7 @@ export default function QuoteForm() {
         {status === 'submitting' ? <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</> : 'Request Quote'}
       </button>
 
-      <p className="text-center text-xs text-gray-500">We typically respond within 24 hours. For urgent requests, email hello@printcraft.co</p>
+      <p className="text-center text-xs text-gray-500">We typically respond within 24 hours. For urgent requests, email appysstudioca@gmail.com</p>
     </form>
   );
 }
