@@ -5,17 +5,30 @@ import { sendOrderConfirmationToCustomer, sendNewOrderNotificationToOwner } from
 
 let _stripe: Stripe;
 function getStripe() {
-  if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-01-28.clover' });
+  if (!_stripe) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+    _stripe = new Stripe(key, { apiVersion: '2026-01-28.clover' });
+  }
   return _stripe;
 }
 
 export async function POST(req: NextRequest) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    console.error('STRIPE_WEBHOOK_SECRET is not configured');
+    return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
+  }
+
   const body = await req.text();
-  const sig = req.headers.get('stripe-signature')!;
+  const sig = req.headers.get('stripe-signature');
+  if (!sig) {
+    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
+  }
 
   let event: Stripe.Event;
   try {
-    event = getStripe().webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
   }
@@ -25,11 +38,13 @@ export async function POST(req: NextRequest) {
 
     // Retrieve full session with line items; cast away the Response<> wrapper
     const fullSession = (await getStripe().checkout.sessions.retrieve(session.id, {
-      expand: ['line_items'],
+      expand: ['line_items', 'line_items.data.price.product'],
     })) as unknown as Stripe.Checkout.Session;
 
     const items = (fullSession.line_items?.data || []).map(item => ({
-      productName: item.description || 'Product',
+      productName: item.price?.product && typeof item.price.product === 'object' && 'name' in item.price.product
+        ? (item.price.product as { name: string }).name
+        : item.description || 'Product',
       quantity: item.quantity || 1,
       price: (item.amount_total || 0) / 100 / (item.quantity || 1),
     }));
@@ -39,8 +54,11 @@ export async function POST(req: NextRequest) {
     const customerEmail = fullSession.customer_email || '';
     const orderId = `ORD-${fullSession.id.slice(-8).toUpperCase()}`;
 
-    // Save order to DB
+    // Idempotency: skip if this session was already processed
     const db = getDB();
+    if (db.orders.some((o: { stripeSessionId?: string }) => o.stripeSessionId === fullSession.id)) {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
     db.orders.push({
       id: orderId,
       type: 'product',
