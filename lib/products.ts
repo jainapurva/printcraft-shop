@@ -1,7 +1,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'custom';
+  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'custom' | 'gaming' | 'gifts';
   price: number;
   description: string;
   features: string[];
@@ -156,6 +156,66 @@ export const products: Product[] = [
     leadTime: '2-3 days',
     materials: ['PETG', 'ASA'],
   },
+  {
+    id: 'books-read-tracker',
+    name: 'Books Read This Year Tracker',
+    category: 'decorative',
+    price: 24.99,
+    description: 'Track your reading goals with this charming desk counter. Rotatable number dials let you update your count as you finish each book. Features miniature 3D book decorations.',
+    features: ['Rotatable number dials', 'Miniature book details', 'Two-tone design', 'Desk or shelf display'],
+    image: '/products/book-tracker-product.jpg',
+    inStock: true,
+    leadTime: '3-4 days',
+    materials: ['PLA'],
+  },
+  {
+    id: 'love-lithophane-lamp',
+    name: 'LOVE Lithophane Photo Lamp',
+    category: 'gifts',
+    price: 34.99,
+    description: 'Personalized LOVE lamp with your photo printed as a lithophane in a heart frame. LED base illuminates your photo beautifully. Perfect for anniversaries, Valentine\'s Day, or as a heartfelt gift.',
+    features: ['Custom photo lithophane', 'LED light base', 'USB powered', 'Heart-shaped frame'],
+    image: '/products/love-lamp-lifestyle.jpg',
+    inStock: true,
+    leadTime: '5-7 days',
+    materials: ['PLA', 'Resin'],
+  },
+  {
+    id: 'robot-watch-stand',
+    name: 'Robot Apple Watch Charging Stand',
+    category: 'functional',
+    price: 19.99,
+    description: 'Adorable robot character that holds your Apple Watch charger as its face. Your watch charges while sitting on this cute little buddy. A fun conversation starter for any desk.',
+    features: ['Fits Apple Watch charger', 'Cute robot design', 'Cable management', 'Stable base'],
+    image: '/products/robot-watch-stand-product.jpg',
+    inStock: true,
+    leadTime: '2-3 days',
+    materials: ['PLA'],
+  },
+  {
+    id: 'ps5-controller-stand',
+    name: 'PS5 Dual Controller Stand',
+    category: 'gaming',
+    price: 22.99,
+    description: 'Vertical stacking stand for two PS5 DualSense controllers. Round base design keeps your controllers organized and your gaming setup clean.',
+    features: ['Holds 2 controllers', 'Vertical stacking', 'Round stable base', 'Matches PS5 aesthetic'],
+    image: '/products/ps5-stand-product.jpg',
+    inStock: true,
+    leadTime: '2-3 days',
+    materials: ['PLA', 'PETG'],
+  },
+  {
+    id: 'ps5-controller-tower',
+    name: 'PS5 Controller Tower Holder',
+    category: 'gaming',
+    price: 27.99,
+    description: 'Sleek tower-style controller holder with PS5 branding and PlayStation logo. Black and white two-tone design perfectly matches your PS5 console. Holds two DualSense controllers.',
+    features: ['PS5-inspired design', 'Two controller slots', 'Two-tone black/white', 'PlayStation logo'],
+    image: '/products/ps5-tower-gaming.jpg',
+    inStock: true,
+    leadTime: '3-4 days',
+    materials: ['PLA', 'PETG'],
+  },
 ];
 
 export const categories = [
@@ -164,4 +224,6 @@ export const categories = [
   { id: 'cable-management', label: 'Cable Management' },
   { id: 'decorative', label: 'Decorative' },
   { id: 'functional', label: 'Functional Parts' },
+  { id: 'gaming', label: 'Gaming' },
+  { id: 'gifts', label: 'Gifts' },
 ];
