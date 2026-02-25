@@ -5,14 +5,19 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { CartProvider } from '@/context/CartContext';
 import AuthProvider from '@/components/AuthProvider';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Appy's Studio — Premium 3D Printed Products",
   description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your 3D files. 4,000+ pieces shipped.',
+  icons: {
+    icon: [
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -26,8 +31,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </CartProvider>
         </AuthProvider>
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   );
