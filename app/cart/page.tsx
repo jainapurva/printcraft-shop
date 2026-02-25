@@ -1,16 +1,26 @@
 'use client';
 import { useCart } from '@/context/CartContext';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Trash2, Plus, Minus, ShoppingBag, CreditCard, Lock, ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trackEvent } from '@/lib/useAnalytics';
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
+  const { data: session } = useSession();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      if (session.user.email && !email) setEmail(session.user.email);
+      if (session.user.name && !name) setName(session.user.name);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
   const [error, setError] = useState('');
   const [pendingOrder, setPendingOrder] = useState<string | null>(null);
 

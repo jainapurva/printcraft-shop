@@ -2,11 +2,43 @@
 import Image from 'next/image';
 import { Product } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
-import { ShoppingCart, Clock } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { ShoppingCart, Clock, Heart } from 'lucide-react';
 import { trackEvent } from '@/lib/useAnalytics';
+import { useState, useEffect } from 'react';
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart();
+  const { data: session } = useSession();
+  const [inWatchlist, setInWatchlist] = useState(false);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetch('/api/user/watchlist')
+        .then(r => r.json())
+        .then(data => {
+          if (data.watchlist?.includes(product.id)) setInWatchlist(true);
+        })
+        .catch(() => {});
+    }
+  }, [session, product.id]);
+
+  const toggleWatchlist = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!session?.user || watchlistLoading) return;
+    setWatchlistLoading(true);
+    try {
+      const res = await fetch('/api/user/watchlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id }),
+      });
+      const data = await res.json();
+      setInWatchlist(data.watchlist.includes(product.id));
+    } catch {}
+    setWatchlistLoading(false);
+  };
 
   const categoryColors: Record<string, string> = {
     organizers: 'bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20',
@@ -38,6 +70,18 @@ export default function ProductCard({ product }: { product: Product }) {
         <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm ${categoryColors[product.category] || 'bg-gray-100 text-gray-600'}`}>
           {product.category.replace('-', ' ')}
         </span>
+        {session?.user && (
+          <button
+            onClick={toggleWatchlist}
+            className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all backdrop-blur-sm ${
+              inWatchlist
+                ? 'bg-red-500 text-white shadow-lg'
+                : 'bg-white/80 text-gray-400 hover:text-red-500 hover:bg-white opacity-0 group-hover:opacity-100'
+            }`}
+          >
+            <Heart className={`w-4 h-4 ${inWatchlist ? 'fill-current' : ''}`} />
+          </button>
+        )}
       </div>
 
       <div className="p-5">
