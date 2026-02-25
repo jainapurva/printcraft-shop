@@ -1,7 +1,10 @@
 import nodemailer from 'nodemailer';
 
+const emailEnabled = !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+
 let _transporter: nodemailer.Transporter;
 function getTransporter() {
+  if (!emailEnabled) return null;
   if (!_transporter) {
     _transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -12,6 +15,15 @@ function getTransporter() {
     });
   }
   return _transporter;
+}
+
+async function safeSendMail(mailOptions: nodemailer.SendMailOptions) {
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.log('[email] Skipped (GMAIL credentials not configured):', mailOptions.subject);
+    return;
+  }
+  await transporter.sendMail(mailOptions);
 }
 
 const OWNER_EMAIL = process.env.OWNER_EMAIL || 'appysstudioca@gmail.com';
@@ -33,7 +45,7 @@ export async function sendOrderConfirmationToCustomer(order: {
       </tr>`)
     .join('');
 
-  await getTransporter().sendMail({
+  await safeSendMail({
     from: `Appy's Studio <${FROM_EMAIL}>`,
     to: order.customerEmail,
     subject: `Order Confirmed — ${order.orderId}`,
@@ -93,7 +105,7 @@ export async function sendNewOrderNotificationToOwner(order: {
     .map(i => `• ${i.productName} × ${i.quantity} = $${(i.price * i.quantity).toFixed(2)}`)
     .join('\n');
 
-  await getTransporter().sendMail({
+  await safeSendMail({
     from: `Appy's Studio <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `🛒 New Order: ${order.orderId} — $${order.totalAmount.toFixed(2)}`,
@@ -137,7 +149,7 @@ export async function sendQuoteRequestNotificationToOwner(quote: {
   quantity: number;
   notes: string;
 }) {
-  await getTransporter().sendMail({
+  await safeSendMail({
     from: `Appy's Studio <${FROM_EMAIL}>`,
     to: OWNER_EMAIL,
     subject: `📐 New Quote Request: ${quote.id} from ${quote.customerName}`,
@@ -181,7 +193,7 @@ export async function sendQuoteAcknowledgementToCustomer(quote: {
   customerEmail: string;
   id: string;
 }) {
-  await getTransporter().sendMail({
+  await safeSendMail({
     from: `Appy's Studio <${FROM_EMAIL}>`,
     to: quote.customerEmail,
     subject: `Quote Request Received — ${quote.id}`,
