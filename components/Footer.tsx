@@ -13,7 +13,7 @@ export default function Footer() {
               Appy&apos;s Studio
             </div>
             <p className="text-sm text-gray-500 max-w-xs leading-relaxed">
-              High-quality 3D printed products made to order. From desk organizers to custom 3D printed objects — we&apos;ve shipped 4,000+ pieces and counting.
+              3D printing &amp; robotics studio. From desk organizers to custom NFC swag to 3D printed robots — we&apos;ve shipped 4,000+ pieces and counting.
             </p>
             <div className="flex gap-3 mt-5">
               <a href="mailto:appysstudioca@gmail.com" className="w-10 h-10 bg-gray-800 hover:bg-purple-500 rounded-xl flex items-center justify-center transition-colors">
@@ -29,7 +29,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Shop</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">3D Printing</h4>
             <ul className="space-y-3 text-sm">
               <li><Link href="/#shop" className="hover:text-purple-400 transition-colors">All Products</Link></li>
               <li><Link href="/#how" className="hover:text-purple-400 transition-colors">How It Works</Link></li>
@@ -38,8 +38,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Info</h4>
+            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">More</h4>
             <ul className="space-y-3 text-sm">
+              <li><Link href="/robotics" className="hover:text-purple-400 transition-colors flex items-center gap-1.5">Robotics <span className="text-[10px] font-bold bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full">Soon</span></Link></li>
               <li><Link href="/#faq" className="hover:text-purple-400 transition-colors">FAQ</Link></li>
               <li><a href="mailto:appysstudioca@gmail.com" className="hover:text-purple-400 transition-colors">Contact</a></li>
             </ul>

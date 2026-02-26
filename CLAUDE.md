@@ -1,7 +1,7 @@
-# Appy's Studio - 3D Printing Shop
+# Appy's Studio - 3D Printing & Robotics
 
 ## Project Overview
-E-commerce website for Appy's Studio, a 3D printing shop. Built with Next.js 16 + TypeScript, deployed on Vercel.
+E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next.js 16 + TypeScript, deployed on AWS EC2.
 
 ## Architecture
 - **Framework:** Next.js 16 (App Router, Turbopack)
@@ -41,13 +41,24 @@ All optional for testing/preview deploys:
 - `ADMIN_PASSWORD` - Analytics page (defaults to `printcraft2025`)
 - `NEXTAUTH_SECRET` - JWT signing (auto-generated in dev)
 
+## Site Structure
+- **3D Printing** (homepage `/`) — Products, How It Works, Custom Quote Form, FAQ
+- **Robotics** (`/robotics`) — Coming Soon page
+- Nav: 3D Printing | Robotics (Soon badge) | Custom Print | Support
+
 ## Recent Changes
-- 2026-02-26: Added Swag category with 4 products
+- 2026-02-26: Site redesign — two main sections: 3D Printing + Robotics
+  - Added `/robotics` Coming Soon page with robot/gear/CPU icons
+  - Updated Navbar: "3D Printing" + "Robotics" (with "Soon" badge)
+  - Updated Footer: "3D Printing" column + "More" column with Robotics link
+  - Updated site title to "3D Printing & Robotics"
+  - Stats section now shows 8 categories
+- 2026-02-26: Added Swag category with 4 products (committed + deployed)
   - Appy's Studio Swag Pack (real photo)
   - Custom 3D Printed Keychain w/ optional NFC (placeholder image)
   - 3D Printed Fridge Magnets (placeholder image)
   - Custom NFC Smart Badge (placeholder image)
-- 2026-02-26: Built ProductDetailModal with image carousel (uncommitted)
+- 2026-02-26: Built ProductDetailModal with image carousel (committed + deployed)
   - Click any product card → full modal with image gallery, thumbnails, keyboard nav
   - Framer Motion animations, responsive layout
 - 2026-02-26: Removed 'custom' from product category filter (quote form section still exists)
@@ -69,12 +80,16 @@ All optional for testing/preview deploys:
   - Nectar brand logo NFC tag photo coming
 - Replace 12 Unsplash stock images with real product photos
 - Add multiple images per product for carousel support
-- Commit & deploy ProductDetailModal + swag products
+- Commit & deploy redesign (nav, footer, robotics page)
+- Add real robotics content when ready (currently Coming Soon)
 
 ## Current State
+- Two-section site: 3D Printing (homepage) + Robotics (Coming Soon)
 - 20 total products across 8 categories (Organizers, Cable Mgmt, Decorative, Functional, Gaming, Gifts, Swag)
 - 5 products have real photos, 12 use Unsplash stock, 3 swag products use swag-box placeholder
-- ProductDetailModal built but not yet committed/deployed
+- ProductDetailModal with image carousel live in production
+- Swag products deployed to production
+- Redesign (nav/footer/robotics) built locally, not yet deployed
 - Production running on AWS EC2 with SSL at https://appysstudio.com
 - .env on server has Stripe, Gmail, NextAuth credentials configured
 - Payments, email, and social login only activate when respective env vars are set

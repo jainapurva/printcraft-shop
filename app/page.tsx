@@ -57,7 +57,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { value: '4,000+', label: 'Pieces Shipped', icon: Truck },
-            { value: '4', label: 'Product Categories', icon: Package },
+            { value: '8', label: 'Product Categories', icon: Package },
             { value: '1-5', label: 'Day Lead Time', icon: Zap },
             { value: '5+', label: 'Materials Available', icon: Shield },
           ].map(s => (

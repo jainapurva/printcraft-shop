@@ -1,7 +1,7 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'gaming' | 'gifts' | 'swag';
+  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'gaming' | 'swag';
   price: number;
   description: string;
   features: string[];
@@ -171,18 +171,6 @@ export const products: Product[] = [
     materials: ['PLA'],
   },
   {
-    id: 'love-lithophane-lamp',
-    name: 'LOVE Lithophane Photo Lamp',
-    category: 'gifts',
-    price: 34.99,
-    description: 'Personalized LOVE lamp with your photo printed as a lithophane in a heart frame. LED base illuminates your photo beautifully. Perfect for anniversaries, Valentine\'s Day, or as a heartfelt gift.',
-    features: ['Custom photo lithophane', 'LED light base', 'USB powered', 'Heart-shaped frame'],
-    image: '/products/love-lamp-lifestyle.jpg',
-    inStock: true,
-    leadTime: '5-7 days',
-    materials: ['PLA', 'Resin'],
-  },
-  {
     id: 'robot-watch-stand',
     name: 'Robot Apple Watch Charging Stand',
     category: 'functional',
@@ -265,6 +253,5 @@ export const categories = [
   { id: 'decorative', label: 'Decorative' },
   { id: 'functional', label: 'Functional Parts' },
   { id: 'gaming', label: 'Gaming' },
-  { id: 'gifts', label: 'Gifts' },
   { id: 'swag', label: 'Swag' },
 ];

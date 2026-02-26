@@ -9,8 +9,8 @@ import AuthProvider from '@/components/AuthProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Appy's Studio — Premium 3D Printed Products",
-  description: 'High-quality 3D printed organizers, cable management systems, and decorative pieces. Custom prints from your 3D files. 4,000+ pieces shipped.',
+  title: "Appy's Studio — 3D Printing & Robotics",
+  description: 'High-quality 3D printed products, swag, and robotics. From desk organizers to custom NFC badges. 4,000+ pieces shipped.',
   icons: {
     icon: [
       { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },

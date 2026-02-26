@@ -7,8 +7,8 @@ import { ShoppingCart, Menu, X, User, LogOut, LayoutDashboard, ChevronDown } fro
 import { useState, useRef, useEffect } from 'react';
 
 const NAV_LINKS = [
-  { label: 'Shop', href: '/#shop' },
-  { label: 'How It Works', href: '/#how' },
+  { label: '3D Printing', href: '/#shop' },
+  { label: 'Robotics', href: '/robotics', badge: 'Soon' },
   { label: 'Custom Print', href: '/#custom' },
   { label: 'Support', href: '/#faq' },
 ];
@@ -41,8 +41,11 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map(link => (
-              <Link key={link.label} href={link.href} className="text-gray-300 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 font-medium transition-all text-sm">
+              <Link key={link.label} href={link.href} className="text-gray-300 hover:text-white px-4 py-2 rounded-lg hover:bg-white/10 font-medium transition-all text-sm flex items-center gap-1.5">
                 {link.label}
+                {'badge' in link && link.badge && (
+                  <span className="text-[10px] font-bold bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full ring-1 ring-purple-500/30">{link.badge}</span>
+                )}
               </Link>
             ))}
           </div>
@@ -108,8 +111,11 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden bg-gray-950 border-t border-gray-800 px-4 py-3 space-y-1">
           {NAV_LINKS.map(link => (
-            <Link key={link.label} href={link.href} className="block text-gray-300 hover:text-white font-medium py-2.5 px-3 rounded-lg hover:bg-white/10" onClick={() => setMenuOpen(false)}>
+            <Link key={link.label} href={link.href} className="flex items-center gap-2 text-gray-300 hover:text-white font-medium py-2.5 px-3 rounded-lg hover:bg-white/10" onClick={() => setMenuOpen(false)}>
               {link.label}
+              {'badge' in link && link.badge && (
+                <span className="text-[10px] font-bold bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full ring-1 ring-purple-500/30">{link.badge}</span>
+              )}
             </Link>
           ))}
           {!session?.user && (
