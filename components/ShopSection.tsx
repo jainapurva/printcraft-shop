@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { Product, categories } from '@/lib/products';
 import ProductCard from '@/components/ProductCard';
+import ProductDetailModal from '@/components/ProductDetailModal';
 
 export default function ShopSection({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const filtered = activeCategory === 'all'
     ? products
@@ -31,8 +33,16 @@ export default function ShopSection({ products }: { products: Product[] }) {
 
       {/* Products grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filtered.map(p => <ProductCard key={p.id} product={p} />)}
+        {filtered.map(p => (
+          <ProductCard key={p.id} product={p} onSelect={setSelectedProduct} />
+        ))}
       </div>
+
+      {/* Product detail modal */}
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+      />
     </div>
   );
 }

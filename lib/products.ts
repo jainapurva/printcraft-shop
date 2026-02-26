@@ -1,11 +1,12 @@
 export interface Product {
   id: string;
   name: string;
-  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'custom' | 'gaming' | 'gifts';
+  category: 'organizers' | 'cable-management' | 'decorative' | 'functional' | 'gaming' | 'gifts' | 'swag';
   price: number;
   description: string;
   features: string[];
   image: string;
+  images?: string[];
   inStock: boolean;
   leadTime: string;
   materials: string[];
@@ -164,6 +165,7 @@ export const products: Product[] = [
     description: 'Track your reading goals with this charming desk counter. Rotatable number dials let you update your count as you finish each book. Features miniature 3D book decorations.',
     features: ['Rotatable number dials', 'Miniature book details', 'Two-tone design', 'Desk or shelf display'],
     image: '/products/book-tracker-product.jpg',
+    images: ['/products/book-tracker-product.jpg', '/products/book-tracker-lifestyle.jpg'],
     inStock: true,
     leadTime: '3-4 days',
     materials: ['PLA'],
@@ -200,8 +202,58 @@ export const products: Product[] = [
     description: 'Sleek stand for two PS5 DualSense controllers with PS5 branding and PlayStation logo. Black and white two-tone design perfectly matches your PS5 console. Keeps your controllers organized and your gaming setup clean.',
     features: ['Holds 2 controllers', 'PS5-inspired design', 'Two-tone black/white', 'Matches PS5 aesthetic'],
     image: '/products/ps5-tower-gaming.jpg',
+    images: ['/products/ps5-tower-gaming.jpg', '/products/ps5-tower-with-console.jpg', '/products/ps5-tower-closeup.jpg'],
     inStock: true,
     leadTime: '3-4 days',
+    materials: ['PLA', 'PETG'],
+  },
+  {
+    id: 'appy-swag-pack',
+    name: "Appy's Studio Swag Pack",
+    category: 'swag',
+    price: 9.99,
+    description: "Rep the Appy's Studio brand! Includes stickers, badges, and a thank-you card featuring our signature golden dog mascot. Made. Printed. Packed. With care — in California.",
+    features: ['Dog mascot stickers', 'Collectible badges', 'Thank-you card', 'Perfect for laptops & bottles'],
+    image: '/products/swag-box.jpg',
+    images: ['/products/swag-box.jpg'],
+    inStock: true,
+    leadTime: '1-2 days',
+    materials: ['Vinyl', 'PLA'],
+  },
+  {
+    id: 'custom-3d-keychain',
+    name: 'Custom 3D Printed Keychain',
+    category: 'swag',
+    price: 7.99,
+    description: 'Get your brand, logo, or favorite design turned into a custom 3D printed keychain. Available with optional NFC tag for smart tap functionality — link to your website, social media, or digital business card.',
+    features: ['Custom logo/design', 'Optional NFC tag', 'Durable & lightweight', 'Multiple color options'],
+    image: '/products/swag-box.jpg',
+    inStock: true,
+    leadTime: '3-5 days',
+    materials: ['PLA', 'PETG'],
+  },
+  {
+    id: '3d-fridge-magnets',
+    name: '3D Printed Fridge Magnets',
+    category: 'swag',
+    price: 5.99,
+    description: 'Fun, custom 3D printed fridge magnets. Choose from our designs or send us your own logo/image. Strong embedded magnets keep them firmly in place.',
+    features: ['Strong embedded magnets', 'Custom designs available', 'Vibrant colors', 'Set of 3'],
+    image: '/products/swag-box.jpg',
+    inStock: true,
+    leadTime: '2-3 days',
+    materials: ['PLA'],
+  },
+  {
+    id: 'nfc-badge-tag',
+    name: 'Custom NFC Smart Badge',
+    category: 'swag',
+    price: 12.99,
+    description: 'A 3D printed badge with an embedded NFC tag. Tap with any phone to instantly open your website, Instagram, portfolio, or digital business card. Perfect for brands, creators, and networking.',
+    features: ['Embedded NFC chip', 'Custom brand logo', 'Tap to open any URL', 'Works with all phones'],
+    image: '/products/swag-box.jpg',
+    inStock: true,
+    leadTime: '3-5 days',
     materials: ['PLA', 'PETG'],
   },
 ];
@@ -214,4 +266,5 @@ export const categories = [
   { id: 'functional', label: 'Functional Parts' },
   { id: 'gaming', label: 'Gaming' },
   { id: 'gifts', label: 'Gifts' },
+  { id: 'swag', label: 'Swag' },
 ];

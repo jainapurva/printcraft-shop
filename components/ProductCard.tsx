@@ -7,7 +7,7 @@ import { ShoppingCart, Clock, Heart } from 'lucide-react';
 import { trackEvent } from '@/lib/useAnalytics';
 import { useState, useEffect } from 'react';
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, onSelect }: { product: Product; onSelect?: (product: Product) => void }) {
   const { addItem } = useCart();
   const { data: session } = useSession();
   const [inWatchlist, setInWatchlist] = useState(false);
@@ -54,10 +54,11 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const handleView = () => {
     trackEvent('product_viewed', { productId: product.id, productName: product.name, category: product.category });
+    onSelect?.(product);
   };
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100" onClick={handleView}>
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 cursor-pointer" onClick={handleView}>
       <div className="aspect-square relative overflow-hidden bg-gray-100">
         <Image
           src={product.image}
