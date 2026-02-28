@@ -11,6 +11,7 @@ export interface Order {
   customerPhone?: string;
   items?: Array<{ productId: string; productName: string; quantity: number; price: number }>;
   totalAmount?: number;
+  squarePaymentId?: string;
   status: 'pending' | 'confirmed' | 'printing' | 'shipped' | 'delivered';
   createdAt: string;
   notes?: string;

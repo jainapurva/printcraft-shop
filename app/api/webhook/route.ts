@@ -1,70 +1,97 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 import { getDB, saveDB } from '@/lib/orders';
 import { sendOrderConfirmationToCustomer, sendNewOrderNotificationToOwner } from '@/lib/email';
 
-let _stripe: Stripe;
-function getStripe() {
-  if (!_stripe) {
-    const key = process.env.STRIPE_SECRET_KEY;
-    if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
-    _stripe = new Stripe(key, { apiVersion: '2026-01-28.clover' });
-  }
-  return _stripe;
-}
-
 export async function POST(req: NextRequest) {
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!webhookSecret) {
-    console.error('STRIPE_WEBHOOK_SECRET is not configured');
+  const signatureKey = process.env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+  if (!signatureKey) {
+    console.error('SQUARE_WEBHOOK_SIGNATURE_KEY is not configured');
     return NextResponse.json({ error: 'Webhook not configured' }, { status: 500 });
   }
 
   const body = await req.text();
-  const sig = req.headers.get('stripe-signature');
-  if (!sig) {
-    return NextResponse.json({ error: 'Missing stripe-signature header' }, { status: 400 });
-  }
+  const signature = req.headers.get('x-square-hmacsha256-signature') || '';
 
-  let event: Stripe.Event;
-  try {
-    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
-  } catch {
+  // Verify webhook signature
+  const { WebhooksHelper } = await import('square');
+  const notificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/webhook`;
+
+  const isValid = await WebhooksHelper.verifySignature({
+    requestBody: body,
+    signatureHeader: signature,
+    signatureKey,
+    notificationUrl,
+  });
+
+  if (!isValid) {
     return NextResponse.json({ error: 'Webhook signature verification failed' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
+  const event = JSON.parse(body);
 
-    // Retrieve full session with line items; cast away the Response<> wrapper
-    const fullSession = (await getStripe().checkout.sessions.retrieve(session.id, {
-      expand: ['line_items', 'line_items.data.price.product'],
-    })) as unknown as Stripe.Checkout.Session;
+  if (event.type === 'payment.updated') {
+    const payment = event.data?.object?.payment;
+    if (!payment || payment.status !== 'COMPLETED') {
+      return NextResponse.json({ received: true });
+    }
 
-    const items = (fullSession.line_items?.data || []).map(item => ({
-      productName: item.price?.product && typeof item.price.product === 'object' && 'name' in item.price.product
-        ? (item.price.product as { name: string }).name
-        : item.description || 'Product',
-      quantity: item.quantity || 1,
-      price: (item.amount_total || 0) / 100 / (item.quantity || 1),
-    }));
+    const squarePaymentId = payment.id;
+    const squareOrderId = payment.order_id;
+    const totalAmount = Number(payment.amount_money?.amount || 0) / 100;
+    const customerEmail = payment.buyer_email_address || '';
 
-    const totalAmount = (fullSession.amount_total || 0) / 100;
-    const customerName = fullSession.metadata?.customerName || 'Customer';
-    const customerEmail = fullSession.customer_email || '';
-    const orderId = `ORD-${fullSession.id.slice(-8).toUpperCase()}`;
+    // Retrieve order details from Square to get line items
+    let items: Array<{ productName: string; quantity: number; price: number }> = [];
+    let customerName = 'Customer';
 
-    // Idempotency: skip if this session was already processed
+    if (squareOrderId) {
+      try {
+        const { SquareClient, SquareEnvironment } = await import('square');
+        const client = new SquareClient({
+          token: process.env.SQUARE_ACCESS_TOKEN!,
+          environment:
+            process.env.SQUARE_ENVIRONMENT === 'production'
+              ? SquareEnvironment.Production
+              : SquareEnvironment.Sandbox,
+        });
+
+        const orderResponse = await client.orders.get({
+          orderId: squareOrderId,
+        });
+
+        const order = orderResponse.order;
+        if (order?.lineItems) {
+          items = order.lineItems.map(item => ({
+            productName: item.name || 'Product',
+            quantity: Number(item.quantity) || 1,
+            price: Number(item.basePriceMoney?.amount || 0) / 100,
+          }));
+        }
+
+        // Extract customer name from payment note
+        if (payment.note) {
+          const nameMatch = payment.note.match(/^Order for (.+)$/);
+          if (nameMatch) customerName = nameMatch[1];
+        }
+      } catch (error) {
+        console.error('Failed to retrieve Square order details:', error);
+      }
+    }
+
+    const orderId = `ORD-${squarePaymentId.slice(-8).toUpperCase()}`;
+
+    // Idempotency: skip if this payment was already processed
     const db = getDB();
-    if (db.orders.some((o: { stripeSessionId?: string }) => o.stripeSessionId === fullSession.id)) {
+    if (db.orders.some((o: { squarePaymentId?: string }) => o.squarePaymentId === squarePaymentId)) {
       return NextResponse.json({ received: true, duplicate: true });
     }
+
     db.orders.push({
       id: orderId,
       type: 'product',
       customerName,
       customerEmail,
-      stripeSessionId: fullSession.id,
+      squarePaymentId,
       items,
       amountTotal: totalAmount,
       status: 'confirmed',
@@ -72,14 +99,13 @@ export async function POST(req: NextRequest) {
     });
     saveDB(db);
 
-    // Build shipping address from collected_information (this Stripe API version's structure)
-    const shippingDetails = fullSession.collected_information?.shipping_details;
-    const shippingAddress = shippingDetails
+    // Build shipping address if available
+    const shippingAddress = payment.shipping_address
       ? [
-          shippingDetails.address?.line1,
-          shippingDetails.address?.city,
-          shippingDetails.address?.state,
-          shippingDetails.address?.country,
+          payment.shipping_address.address_line_1,
+          payment.shipping_address.locality,
+          payment.shipping_address.administrative_district_level_1,
+          payment.shipping_address.country,
         ].filter(Boolean).join(', ')
       : undefined;
 

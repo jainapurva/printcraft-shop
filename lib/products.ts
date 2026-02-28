@@ -26,18 +26,6 @@ export const products: Product[] = [
     materials: ['PLA', 'PETG'],
   },
   {
-    id: 'wall-shelf-organizer',
-    name: 'Wall-Mount Shelf Organizer',
-    category: 'organizers',
-    price: 19.99,
-    description: 'Clean wall-mounted organizer for keys, mail, sunglasses, and everyday items. Easy screw-mount installation.',
-    features: ['3 hooks', '2 shelves', 'Wall-mount hardware included', 'Minimalist design'],
-    image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=600&h=600&fit=crop',
-    inStock: true,
-    leadTime: '2-3 days',
-    materials: ['PLA', 'PETG'],
-  },
-  {
     id: 'drawer-divider-set',
     name: 'Drawer Divider Set (8 pieces)',
     category: 'organizers',

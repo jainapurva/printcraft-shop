@@ -22,6 +22,7 @@ export default function CartPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
   const [error, setError] = useState('');
+  const [coupon, setCoupon] = useState('');
   const [pendingOrder, setPendingOrder] = useState<string | null>(null);
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -38,6 +39,7 @@ export default function CartPage() {
           items: items.map(i => ({ productName: i.product.name, price: i.product.price, quantity: i.quantity })),
           customerEmail: email,
           customerName: name,
+          couponCode: coupon || undefined,
         }),
       });
       const data = await res.json();
@@ -130,6 +132,8 @@ export default function CartPage() {
                 <input required type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 <input required type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
+                <input type="text" placeholder="Coupon code (optional)" value={coupon} onChange={e => setCoupon(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 {error && <p className="text-red-500 text-xs bg-red-50 p-3 rounded-lg">{error}</p>}
                 <button type="submit" disabled={loading}

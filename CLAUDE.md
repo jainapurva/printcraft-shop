@@ -6,7 +6,7 @@ E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next
 ## Architecture
 - **Framework:** Next.js 16 (App Router, Turbopack)
 - **Auth:** NextAuth with optional Google/Facebook/Apple OAuth
-- **Payments:** Stripe (gracefully falls back to manual orders if unconfigured)
+- **Payments:** Square Checkout API (gracefully falls back to manual orders if unconfigured)
 - **Email:** Nodemailer + Gmail (gracefully skips if GMAIL creds missing)
 - **Data:** JSON file-based storage (`data/` dir) via `lib/orders.ts`
 - **Styling:** Tailwind CSS, purple theme matching Appy's Studio logo
@@ -14,8 +14,8 @@ E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next
 ## Key Files
 - `lib/email.ts` - Email with graceful no-op when creds missing
 - `lib/auth.ts` - NextAuth config, providers are conditional
-- `app/api/checkout/route.ts` - Stripe checkout, falls back without keys
-- `app/api/webhook/route.ts` - Stripe webhook handler
+- `app/api/checkout/route.ts` - Square checkout, falls back without keys
+- `app/api/webhook/route.ts` - Square webhook handler
 - `app/api/quote/route.ts` - Custom print quote submissions
 
 ## Deployment
@@ -31,9 +31,10 @@ E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next
 
 ## Environment Variables
 All optional for testing/preview deploys:
-- `STRIPE_SECRET_KEY` - Stripe API key (falls back to manual orders)
-- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` - Client-side Stripe key
+- `SQUARE_ACCESS_TOKEN` - Square API access token (falls back to manual orders)
+- `SQUARE_LOCATION_ID` - Square location ID for orders
+- `SQUARE_ENVIRONMENT` - `sandbox` or `production` (defaults to sandbox)
+- `SQUARE_WEBHOOK_SIGNATURE_KEY` - Square webhook signature verification
 - `GMAIL_USER` / `GMAIL_APP_PASSWORD` - Email sending (skips if missing)
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` - Google OAuth
 - `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET` - Facebook OAuth
@@ -91,5 +92,5 @@ All optional for testing/preview deploys:
 - Swag products deployed to production
 - Redesign (nav/footer/robotics) built locally, not yet deployed
 - Production running on AWS EC2 with SSL at https://appysstudio.com
-- .env on server has Stripe, Gmail, NextAuth credentials configured
+- .env on server needs Square, Gmail, NextAuth credentials configured
 - Payments, email, and social login only activate when respective env vars are set

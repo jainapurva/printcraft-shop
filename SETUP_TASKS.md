@@ -1,6 +1,6 @@
 # Appy's Studio Shop — Setup Tasks
 
-Your shop is live at: **https://3dprints-shop.vercel.app**
+Your shop is live at: **https://appysstudio.com**
 GitHub repo: **https://github.com/jainapurva/printcraft-shop**
 
 All environment variables are currently set to **placeholders**. The site loads but payments/emails won't work until you replace them with real values.
@@ -9,29 +9,29 @@ All environment variables are currently set to **placeholders**. The site loads 
 
 ## Tasks to Complete
 
-### 1. Set up Stripe (Payments)
-Stripe handles checkout and order payments.
+### 1. Set up Square (Payments)
+Square handles checkout and order payments.
 
-- [ ] Create a Stripe account at https://dashboard.stripe.com/register
-- [ ] Go to **Developers > API Keys**
-- [ ] Copy your **Publishable key** (starts with `pk_live_` or `pk_test_`)
-- [ ] Copy your **Secret key** (starts with `sk_live_` or `sk_test_`)
-- [ ] Go to **Developers > Webhooks > Add endpoint**
-  - URL: `https://3dprints-shop.vercel.app/api/webhook`
-  - Events to listen for: `checkout.session.completed`
-  - Copy the **Webhook signing secret** (starts with `whsec_`)
+- [ ] Create a Square Developer account at https://developer.squareup.com
+- [ ] Create an application in the Developer Console
+- [ ] Go to **Credentials** tab
+- [ ] Copy your **Access Token**
+- [ ] Go to **Locations** tab and copy your **Location ID**
+- [ ] Go to **Webhooks** tab > **Add Subscription**
+  - URL: `https://appysstudio.com/api/webhook`
+  - Events to subscribe: `payment.updated`
+  - Copy the **Webhook Signature Key**
 
-**Update in Vercel:**
-1. Go to https://vercel.com/apurvas-projects-696899e3/3dprints-shop/settings/environment-variables
-2. Update these variables:
+**Update on server (.env):**
 
 | Variable | Value |
 |----------|-------|
-| `STRIPE_SECRET_KEY` | `sk_test_...` or `sk_live_...` |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_test_...` or `pk_live_...` |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_...` |
+| `SQUARE_ACCESS_TOKEN` | Your access token |
+| `SQUARE_LOCATION_ID` | Your location ID |
+| `SQUARE_ENVIRONMENT` | `sandbox` (testing) or `production` (live) |
+| `SQUARE_WEBHOOK_SIGNATURE_KEY` | Your webhook signature key |
 
-> **Tip:** Use test keys first (`pk_test_`, `sk_test_`) to verify everything works before going live.
+> **Tip:** Use sandbox credentials first to verify everything works before switching to production.
 
 ---
 
@@ -43,7 +43,7 @@ Emails (order confirmations, quote notifications) are sent via Gmail using Nodem
   - Select app: "Mail", device: "Other" (enter "Appy's Studio")
   - Copy the 16-character password
 
-**Update in Vercel:**
+**Update on server (.env):**
 
 | Variable | Value |
 |----------|-------|
@@ -56,8 +56,7 @@ Emails (order confirmations, quote notifications) are sent via Gmail using Nodem
 ---
 
 ### 3. Set Base URL
-- [ ] If you add a custom domain, update `NEXT_PUBLIC_BASE_URL` to your domain (e.g., `https://printcraft.co`)
-- Currently set to `https://3dprints-shop.vercel.app`
+- [ ] Update `NEXT_PUBLIC_BASE_URL` to your domain (e.g., `https://appysstudio.com`)
 
 ---
 
@@ -70,45 +69,26 @@ The `/admin` page is protected by a password.
 
 ---
 
-### 5. Custom Domain (Optional)
-- [ ] Go to Vercel project settings > **Domains**
-- [ ] Add your custom domain (e.g., `shop.appysstudio.com` or `printcraft.co`)
-- [ ] Update DNS records as instructed by Vercel
-- [ ] Update `NEXT_PUBLIC_BASE_URL` to the new domain
-- [ ] Update the Stripe webhook URL to use the new domain
-
----
-
-## How to Update Environment Variables
-
-1. Go to https://vercel.com/apurvas-projects-696899e3/3dprints-shop/settings/environment-variables
-2. Click the three dots next to any variable > **Edit**
-3. Replace the placeholder value with the real one
-4. Click **Save**
-5. **Redeploy** for changes to take effect: go to **Deployments** tab > click three dots on latest > **Redeploy**
-
----
-
 ## Quick Summary
 
 | Service | What it does | Sign up |
 |---------|-------------|---------|
-| Stripe | Payments & checkout | https://dashboard.stripe.com/register |
+| Square | Payments & checkout | https://developer.squareup.com |
 | Gmail | Transactional emails | Your own Gmail account |
-| Vercel | Hosting (already done) | Already set up |
 
 ---
 
 ## Current Env Vars (all placeholders)
 
 ```
-STRIPE_SECRET_KEY=placeholder
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=placeholder
-STRIPE_WEBHOOK_SECRET=placeholder
+SQUARE_ACCESS_TOKEN=
+SQUARE_LOCATION_ID=
+SQUARE_ENVIRONMENT=sandbox
+SQUARE_WEBHOOK_SIGNATURE_KEY=
 GMAIL_USER=placeholder
 GMAIL_APP_PASSWORD=placeholder
-NEXT_PUBLIC_BASE_URL=https://3dprints-shop.vercel.app
+NEXT_PUBLIC_BASE_URL=https://appysstudio.com
 ADMIN_PASSWORD=printcraft2025
 ```
 
-Replace each one with real values from the services above, then redeploy.
+Replace each one with real values from the services above, then restart the service.
