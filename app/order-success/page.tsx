@@ -1,7 +1,45 @@
+'use client';
+
 import Link from 'next/link';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function OrderSuccess() {
+  const [verifying, setVerifying] = useState(true);
+  const [orderId, setOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const squareOrderId = sessionStorage.getItem('squareOrderId');
+    if (!squareOrderId) {
+      setVerifying(false);
+      return;
+    }
+    sessionStorage.removeItem('squareOrderId');
+
+    fetch('/api/verify-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ squareOrderId }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.orderId) setOrderId(data.orderId);
+      })
+      .catch(() => {})
+      .finally(() => setVerifying(false));
+  }, []);
+
+  if (verifying) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center px-4">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 text-purple-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Confirming your order...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="max-w-md text-center">
@@ -9,6 +47,9 @@ export default function OrderSuccess() {
           <CheckCircle className="w-12 h-12 text-emerald-500" />
         </div>
         <h1 className="text-3xl font-extrabold text-gray-900 mb-3">Order Confirmed!</h1>
+        {orderId && (
+          <p className="text-gray-500 mb-2">Order <code className="bg-gray-100 px-3 py-1 rounded-lg text-sm font-mono">{orderId}</code></p>
+        )}
         <p className="text-gray-500 mb-2 leading-relaxed">Payment received. We&apos;ll start printing your order right away.</p>
         <p className="text-gray-400 text-sm mb-10">You&apos;ll receive an email confirmation with your order details and tracking info once shipped.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

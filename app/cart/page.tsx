@@ -44,6 +44,7 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (data.url) {
+        if (data.orderId) sessionStorage.setItem('squareOrderId', data.orderId);
         window.location.href = data.url;
       } else if (data.paymentPending) {
         clearCart();
