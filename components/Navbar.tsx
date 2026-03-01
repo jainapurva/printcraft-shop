@@ -7,9 +7,9 @@ import { ShoppingCart, Menu, X, User, LogOut, LayoutDashboard, ChevronDown } fro
 import { useState, useRef, useEffect } from 'react';
 
 const NAV_LINKS = [
-  { label: '3D Printing', href: '/#shop' },
-  { label: 'Robotics', href: '/robotics', badge: 'Soon' },
+  { label: 'Shop', href: '/#shop' },
   { label: 'Custom Print', href: '/#custom' },
+  { label: 'Robotics', href: '/robotics', badge: 'Soon' },
   { label: 'Support', href: '/#faq' },
 ];
 
