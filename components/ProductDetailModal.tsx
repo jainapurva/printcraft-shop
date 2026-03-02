@@ -2,10 +2,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingCart, Clock, ChevronLeft, ChevronRight, Package } from 'lucide-react';
-import { Product } from '@/lib/products';
+import { X, ShoppingCart, Clock, ChevronLeft, ChevronRight, Package, Check } from 'lucide-react';
+import { Product, COLOR_HEX } from '@/lib/products';
 import { useCart } from '@/context/CartContext';
 import { trackEvent } from '@/lib/useAnalytics';
+import ColorizedProductImage from '@/components/ColorizedProductImage';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -16,6 +17,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
   const { addItem } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [selectedColor, setSelectedColor] = useState<string>('');
 
   const images = product?.images?.length ? product.images : product ? [product.image] : [];
 
@@ -23,7 +25,8 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
   useEffect(() => {
     setSelectedImageIndex(0);
     setAddedToCart(false);
-  }, [product?.id]);
+    setSelectedColor(product?.colors?.[0] || '');
+  }, [product?.id, product?.colors]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -48,8 +51,8 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
   const handleAddToCart = () => {
     if (!product) return;
-    addItem(product);
-    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price });
+    addItem(product, selectedColor || undefined);
+    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price, color: selectedColor });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
@@ -95,36 +98,58 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                 <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={selectedImageIndex}
+                      key={`${selectedImageIndex}-${selectedColor}`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
                       className="absolute inset-0"
                     >
-                      <Image
-                        src={images[selectedImageIndex]}
-                        alt={`${product.name} - Image ${selectedImageIndex + 1}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        priority
-                      />
+                      {selectedImageIndex === 0 && selectedColor && product.transparentImage ? (
+                        <ColorizedProductImage
+                          originalSrc={images[0]}
+                          transparentSrc={product.transparentImage}
+                          selectedColor={selectedColor}
+                          alt={`${product.name} in ${selectedColor}`}
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          priority
+                        />
+                      ) : (
+                        <Image
+                          src={images[selectedImageIndex]}
+                          alt={`${product.name} - Image ${selectedImageIndex + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          priority
+                        />
+                      )}
                     </motion.div>
                   </AnimatePresence>
+
+                  {/* Color preview label */}
+                  {selectedImageIndex === 0 && selectedColor && product.transparentImage && (
+                    <div className="absolute top-2.5 left-2.5 z-[3] flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-[11px] px-2.5 py-1 rounded-full pointer-events-none">
+                      <span
+                        className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30"
+                        style={{ backgroundColor: COLOR_HEX[selectedColor] || '#ccc' }}
+                      />
+                      Color preview
+                    </div>
+                  )}
 
                   {/* Navigation arrows */}
                   {images.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 z-[2] w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 z-[2] w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
@@ -133,7 +158,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
                   {/* Image counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[2] bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
                       {selectedImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -211,6 +236,34 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                     {product.materials.join(', ')}
                   </span>
                 </div>
+
+                {/* Color picker */}
+                {product.colors?.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                      Color{selectedColor && <span className="font-normal text-gray-500"> — {selectedColor}</span>}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.colors.map(color => (
+                        <button
+                          key={color}
+                          onClick={() => setSelectedColor(color)}
+                          title={color}
+                          className={`w-9 h-9 rounded-full transition-all flex items-center justify-center ${
+                            selectedColor === color
+                              ? 'ring-2 ring-purple-500 ring-offset-2 scale-110'
+                              : 'hover:scale-110 ring-1 ring-gray-200'
+                          }`}
+                          style={{ backgroundColor: COLOR_HEX[color] || '#ccc' }}
+                        >
+                          {selectedColor === color && (
+                            <Check className={`w-4 h-4 ${['White', 'Marble', 'Pink Light', 'Pastel Green', 'Yellow'].includes(color) ? 'text-gray-700' : 'text-white'}`} strokeWidth={3} />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Stock status */}
                 <div className="mb-6">

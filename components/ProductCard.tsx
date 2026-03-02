@@ -1,14 +1,12 @@
 'use client';
 import Image from 'next/image';
-import { Product } from '@/lib/products';
-import { useCart } from '@/context/CartContext';
+import { Product, COLOR_HEX } from '@/lib/products';
 import { useSession } from 'next-auth/react';
 import { ShoppingCart, Clock, Heart } from 'lucide-react';
 import { trackEvent } from '@/lib/useAnalytics';
 import { useState, useEffect } from 'react';
 
 export default function ProductCard({ product, onSelect }: { product: Product; onSelect?: (product: Product) => void }) {
-  const { addItem } = useCart();
   const { data: session } = useSession();
   const [inWatchlist, setInWatchlist] = useState(false);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
@@ -48,8 +46,8 @@ export default function ProductCard({ product, onSelect }: { product: Product; o
   };
 
   const handleAddToCart = () => {
-    addItem(product);
-    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price });
+    // Open modal so user can pick a color
+    onSelect?.(product);
   };
 
   const handleView = () => {
@@ -95,11 +93,28 @@ export default function ProductCard({ product, onSelect }: { product: Product; o
           ))}
         </div>
 
-        <div className="flex items-center gap-3 text-xs text-gray-400 mb-4">
+        <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
           <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{product.leadTime}</span>
           <span className="w-1 h-1 rounded-full bg-gray-300" />
           <span>{product.materials.join(' / ')}</span>
         </div>
+
+        {/* Color swatches */}
+        {product.colors?.length > 0 && (
+          <div className="flex items-center gap-1.5 mb-4">
+            {product.colors.slice(0, 7).map(color => (
+              <span
+                key={color}
+                className="w-4 h-4 rounded-full ring-1 ring-gray-200 hover:scale-125 transition-transform cursor-pointer"
+                style={{ backgroundColor: COLOR_HEX[color] || '#ccc' }}
+                title={color}
+              />
+            ))}
+            {product.colors.length > 7 && (
+              <span className="text-[10px] text-gray-400 font-medium ml-0.5">+{product.colors.length - 7}</span>
+            )}
+          </div>
+        )}
 
         <div className="flex items-center justify-between pt-3 border-t border-gray-100">
           <div>

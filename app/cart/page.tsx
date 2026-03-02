@@ -3,16 +3,36 @@ import { useCart } from '@/context/CartContext';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Trash2, Plus, Minus, ShoppingBag, CreditCard, Lock, ArrowLeft } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { COLOR_HEX } from '@/lib/products';
+import ColorizedProductImage from '@/components/ColorizedProductImage';
+import { Truck, Trash2, Plus, Minus, ShoppingBag, CreditCard, Lock, ArrowLeft } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { trackEvent } from '@/lib/useAnalytics';
+import { US_STATES } from '@/lib/shipping';
+
+interface ShippingRate {
+  cost: number;
+  label: string;
+  estimatedDays: string;
+}
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
   const { data: session } = useSession();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
+  const [shipping, setShipping] = useState<ShippingRate | null>(null);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingError, setShippingError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [coupon, setCoupon] = useState('');
+  const [pendingOrder, setPendingOrder] = useState<string | null>(null);
+  const zipDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -21,25 +41,59 @@ export default function CartPage() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
-  const [error, setError] = useState('');
-  const [coupon, setCoupon] = useState('');
-  const [pendingOrder, setPendingOrder] = useState<string | null>(null);
+
+  // Fetch shipping rate when zip has 5 digits
+  useEffect(() => {
+    if (zipDebounce.current) clearTimeout(zipDebounce.current);
+    const cleanZip = zip.replace(/\D/g, '');
+    if (cleanZip.length < 5) {
+      setShipping(null);
+      setShippingError('');
+      return;
+    }
+    zipDebounce.current = setTimeout(async () => {
+      setShippingLoading(true);
+      setShippingError('');
+      try {
+        const res = await fetch('/api/shipping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zipCode: cleanZip,
+            items: items.map(i => ({ productId: i.product.id, quantity: i.quantity })),
+          }),
+        });
+        if (!res.ok) { setShippingError('Could not calculate shipping for this zip code.'); setShipping(null); }
+        else setShipping(await res.json());
+      } catch {
+        setShippingError('Failed to calculate shipping.');
+      }
+      setShippingLoading(false);
+    }, 500);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zip, items]);
+
+  const grandTotal = total + (shipping?.cost ?? 0);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !name) return;
+    if (!email || !name || !address || !city || !state || !zip) return;
+    if (!shipping) { setError('Please enter a valid US zip code to calculate shipping.'); return; }
     setLoading(true);
     setError('');
-    trackEvent('checkout_started', { itemCount: items.length, total });
+    trackEvent('checkout_started', { itemCount: items.length, total: grandTotal });
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(i => ({ productName: i.product.name, price: i.product.price, quantity: i.quantity })),
+          items: items.map(i => ({ productName: i.product.name, price: i.product.price, quantity: i.quantity, color: i.selectedColor })),
           customerEmail: email,
           customerName: name,
           couponCode: coupon || undefined,
+          shippingCost: shipping.cost,
+          shippingLabel: shipping.label,
+          shippingAddress: { address, city, state, zip },
         }),
       });
       const data = await res.json();
@@ -99,19 +153,32 @@ export default function CartPage() {
         <h1 className="text-3xl font-extrabold mb-8 text-gray-900">Your Cart</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {items.map(({ product, quantity }) => (
-              <div key={product.id} className="bg-white rounded-2xl p-5 flex gap-4 shadow-sm border border-gray-100">
+            {items.map(({ product, quantity, selectedColor }) => (
+              <div key={`${product.id}::${selectedColor || ''}`} className="bg-white rounded-2xl p-5 flex gap-4 shadow-sm border border-gray-100">
                 <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-100">
-                  <Image src={product.image} alt={product.name} fill className="object-cover" sizes="80px" />
+                  <ColorizedProductImage
+                    originalSrc={product.image}
+                    transparentSrc={product.transparentImage}
+                    selectedColor={selectedColor}
+                    alt={product.name}
+                    sizes="80px"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-900 truncate">{product.name}</h3>
-                  <p className="text-gray-400 text-xs mt-0.5">{product.leadTime} lead time · {product.materials[0]}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <p className="text-gray-400 text-xs">{product.leadTime} lead time · {product.materials[0]}</p>
+                    {selectedColor && (
+                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                        · <span className="w-3 h-3 rounded-full inline-block ring-1 ring-gray-200" style={{ backgroundColor: COLOR_HEX[selectedColor] || '#ccc' }} /> {selectedColor}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-3 mt-3">
-                    <button onClick={() => updateQuantity(product.id, quantity - 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Minus className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => updateQuantity(product.id, selectedColor, quantity - 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Minus className="w-3.5 h-3.5" /></button>
                     <span className="font-bold w-6 text-center text-sm">{quantity}</span>
-                    <button onClick={() => updateQuantity(product.id, quantity + 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Plus className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => removeItem(product.id)} className="ml-auto text-red-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <button onClick={() => updateQuantity(product.id, selectedColor, quantity + 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Plus className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => removeItem(product.id, selectedColor)} className="ml-auto text-red-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
@@ -126,19 +193,52 @@ export default function CartPage() {
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-20">
               <h3 className="font-extrabold text-lg mb-5 text-gray-900">Order Summary</h3>
               <div className="flex justify-between text-sm mb-2"><span className="text-gray-500">Subtotal</span><span className="font-semibold">${total.toFixed(2)}</span></div>
-              <div className="flex justify-between text-sm mb-2"><span className="text-gray-500">Shipping</span><span className="text-emerald-600 font-medium">Calculated at checkout</span></div>
-              <div className="border-t border-gray-100 my-5" />
-              <div className="flex justify-between font-extrabold text-xl mb-6"><span>Total</span><span>${total.toFixed(2)}</span></div>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-500">Shipping</span>
+                {shippingLoading ? (
+                  <span className="text-gray-400 text-xs">Calculating...</span>
+                ) : shipping ? (
+                  <span className="font-semibold">${shipping.cost.toFixed(2)}</span>
+                ) : (
+                  <span className="text-gray-400 text-xs">Enter zip below</span>
+                )}
+              </div>
+              {shipping && (
+                <div className="flex items-start gap-1.5 text-xs text-gray-400 mb-2">
+                  <Truck className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+                  <span>{shipping.label} · {shipping.estimatedDays}</span>
+                </div>
+              )}
+              {shippingError && <p className="text-red-500 text-xs mb-2">{shippingError}</p>}
+              <div className="border-t border-gray-100 my-4" />
+              <div className="flex justify-between font-extrabold text-xl mb-6">
+                <span>Total</span>
+                <span>${grandTotal.toFixed(2)}</span>
+              </div>
+
               <form onSubmit={handleCheckout} className="space-y-3">
                 <input required type="text" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 <input required type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
+                <input required type="text" placeholder="Street address" value={address} onChange={e => setAddress(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
+                <div className="grid grid-cols-2 gap-2">
+                  <input required type="text" placeholder="City" value={city} onChange={e => setCity(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
+                  <select required value={state} onChange={e => setState(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all bg-white text-gray-700">
+                    <option value="">State</option>
+                    {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <input required type="text" placeholder="ZIP code" value={zip} onChange={e => setZip(e.target.value)} maxLength={10}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 <input type="text" placeholder="Coupon code (optional)" value={coupon} onChange={e => setCoupon(e.target.value)}
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all" />
                 {error && <p className="text-red-500 text-xs bg-red-50 p-3 rounded-lg">{error}</p>}
-                <button type="submit" disabled={loading}
-                  className="w-full bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-amber-600 disabled:from-orange-300 disabled:to-purple-300 text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25">
+                <button type="submit" disabled={loading || !shipping}
+                  className="w-full bg-gradient-to-r from-purple-500 to-purple-400 hover:from-purple-600 hover:to-amber-600 disabled:from-gray-300 disabled:to-gray-300 text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25 disabled:shadow-none">
                   <CreditCard className="w-4 h-4" />
                   {loading ? 'Processing...' : 'Place Order'}
                 </button>

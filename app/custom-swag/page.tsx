@@ -266,6 +266,7 @@ export default function CustomSwagPage() {
       inStock: true,
       leadTime: '3-5 days',
       materials: ['PLA'],
+      colors: [],
     };
     addItem(swagProduct);
     setAdded(true);

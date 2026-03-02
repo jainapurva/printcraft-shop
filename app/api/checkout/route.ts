@@ -35,17 +35,29 @@ export async function POST(req: NextRequest) {
           : SquareEnvironment.Sandbox,
     });
 
-    const { items, customerEmail, customerName, couponCode } = await req.json();
+    const { items, customerEmail, customerName, couponCode, shippingCost, shippingLabel, shippingAddress } = await req.json();
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-    const lineItems = items.map((item: { productName: string; price: number; quantity: number }) => ({
-      name: item.productName,
+    const lineItems = items.map((item: { productName: string; price: number; quantity: number; color?: string }) => ({
+      name: item.color ? `${item.productName} - ${item.color}` : item.productName,
       quantity: String(item.quantity),
       basePriceMoney: {
         amount: BigInt(Math.round(item.price * 100)),
         currency: 'USD',
       },
     }));
+
+    // Add shipping as a line item if provided
+    if (shippingCost && shippingCost > 0) {
+      lineItems.push({
+        name: shippingLabel || 'Shipping',
+        quantity: '1',
+        basePriceMoney: {
+          amount: BigInt(Math.round(shippingCost * 100)),
+          currency: 'USD',
+        },
+      });
+    }
 
     // Apply coupon discount if valid and not expired
     const validCoupons: Record<string, { name: string; percentage: string; expiresAt: string }> = {
@@ -76,6 +88,15 @@ export async function POST(req: NextRequest) {
       },
       prePopulatedData: {
         buyerEmail: customerEmail,
+        ...(shippingAddress && {
+          buyerAddress: {
+            addressLine1: shippingAddress.address,
+            locality: shippingAddress.city,
+            administrativeDistrictLevel1: shippingAddress.state,
+            postalCode: shippingAddress.zip,
+            country: 'US',
+          },
+        }),
       },
       paymentNote: `Order for ${customerName}`,
     });

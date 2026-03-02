@@ -6,91 +6,151 @@ E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next
 ## Architecture
 - **Framework:** Next.js 16 (App Router, Turbopack)
 - **Auth:** NextAuth with optional Google/Facebook/Apple OAuth
-- **Payments:** Square Checkout API (gracefully falls back to manual orders if unconfigured)
-- **Email:** Nodemailer + Gmail (gracefully skips if GMAIL creds missing)
-- **Data:** JSON file-based storage (`data/` dir) via `lib/orders.ts`
+- **Payments:** Square Checkout API via Payment Links (`square` v44 SDK)
+  - Creates hosted checkout links, customer pays on Square's page
+  - Order verification on redirect back (not webhooks — Square Payment Links don't reliably fire webhook events)
+  - Gracefully falls back to manual orders if Square env vars not set
+- **Email:** Nodemailer + Gmail (`appysstudioca@gmail.com`), gracefully skips if GMAIL creds missing
+- **Data:** JSON file-based storage (`data/orders.json`) via `lib/orders.ts`
 - **Styling:** Tailwind CSS, purple theme matching Appy's Studio logo
 
 ## Key Files
+- `lib/products.ts` - Product catalog (3 products), Product interface
+- `lib/orders.ts` - Order interface + JSON file read/write (`squarePaymentId` field for idempotency)
 - `lib/email.ts` - Email with graceful no-op when creds missing
 - `lib/auth.ts` - NextAuth config, providers are conditional
-- `app/api/checkout/route.ts` - Square checkout, falls back without keys
-- `app/api/webhook/route.ts` - Square webhook handler
-- `app/api/quote/route.ts` - Custom print quote submissions
+- `app/api/checkout/route.ts` - Square checkout via `client.checkout.paymentLinks.create()`, coupon support
+- `app/api/verify-order/route.ts` - Primary order save: fetches order from Square API on redirect, saves to DB, sends emails
+- `app/api/webhook/route.ts` - Square webhook handler (backup, rarely fires for Payment Links)
+- `app/api/quote/route.ts` - Custom print & custom swag quote submissions
+- `app/custom-swag/page.tsx` - Custom swag builder (magnet/keychain/NFC badge/custom)
+- `components/ShopSection.tsx` - Product grid + Custom Swag CTA card
+- `components/ProductCard.tsx` - Individual product card
+- `components/ProductDetailModal.tsx` - Full modal with image carousel (Framer Motion)
+- `components/Navbar.tsx` - Sticky nav bar
+- `components/QuoteForm.tsx` - Custom 3D print quote form
+- `app/cart/page.tsx` - Cart page with coupon code input, saves `squareOrderId` to sessionStorage
+- `app/order-success/page.tsx` - Calls `/api/verify-order` on mount to confirm & save order
+
+## Payment Flow
+1. User adds items to cart, optionally enters coupon code
+2. `POST /api/checkout` creates Square Payment Link with line items + discounts
+3. Response includes `squareOrderId` — saved to sessionStorage before redirect
+4. User pays on Square's hosted checkout page
+5. Square redirects to `/order-success`
+6. Success page reads `squareOrderId` from sessionStorage, calls `POST /api/verify-order`
+7. Verify endpoint fetches order from Square API, confirms payment (tenders exist), saves to `data/orders.json`, sends confirmation emails
+8. Webhook at `/api/webhook` exists as backup but Square Payment Links don't reliably trigger it
+
+## Coupon Codes
+Defined in `app/api/checkout/route.ts`:
+- `TESTFREE` — 100% off (for testing), expires 2026-03-01
+- `FRIENDS50` — 50% off, expires 2026-03-01
 
 ## Deployment
 - **Production:** AWS EC2 (`3.238.88.157`) via `deploy_to_aws.sh`
 - **Domain:** https://appysstudio.com (SSL via certbot)
 - **GitHub:** `git@github-jainapurva:jainapurva/printcraft-shop.git`
-- **Deploy command:** `bash deploy_to_aws.sh` (builds locally, rsyncs to EC2)
+- **Deploy command:** `bash deploy_to_aws.sh` (builds locally, rsyncs standalone build to EC2)
 - **Server:** nginx reverse proxy → Node.js on port 3001
 - **Service:** `systemctl restart 3dprints-shop`
 - **SSH:** `ssh -i /media/ddarji/storage/git/free_uploader/socialAI.pem ubuntu@3.238.88.157`
 - **Logs:** `sudo journalctl -u 3dprints-shop -f`
-- **Vercel:** Still exists as backup at `3dprints-shop.vercel.app` (no longer primary)
+- **Server env file:** `/opt/3dprints-shop/.env`
 
 ## Environment Variables
-All optional for testing/preview deploys:
-- `SQUARE_ACCESS_TOKEN` - Square API access token (falls back to manual orders)
-- `SQUARE_LOCATION_ID` - Square location ID for orders
-- `SQUARE_ENVIRONMENT` - `sandbox` or `production` (defaults to sandbox)
-- `SQUARE_WEBHOOK_SIGNATURE_KEY` - Square webhook signature verification
-- `GMAIL_USER` / `GMAIL_APP_PASSWORD` - Email sending (skips if missing)
+All optional for local dev (features gracefully degrade):
+- `SQUARE_ACCESS_TOKEN` - Square API access token
+- `SQUARE_LOCATION_ID` - Square location ID
+- `SQUARE_ENVIRONMENT` - `sandbox` or `production`
+- `SQUARE_WEBHOOK_SIGNATURE_KEY` - Webhook signature verification
+- `GMAIL_USER` / `GMAIL_APP_PASSWORD` - Email sending
+- `OWNER_EMAIL` - Owner notification email (defaults to GMAIL_USER)
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` - Google OAuth
 - `FACEBOOK_CLIENT_ID` / `FACEBOOK_CLIENT_SECRET` - Facebook OAuth
 - `APPLE_CLIENT_ID` / `APPLE_CLIENT_SECRET` - Apple OAuth
 - `ADMIN_PASSWORD` - Analytics page (defaults to `printcraft2025`)
 - `NEXTAUTH_SECRET` - JWT signing (auto-generated in dev)
 
-## Site Structure
-- **3D Printing** (homepage `/`) — Products, How It Works, Custom Quote Form, FAQ
+## Site Structure & Navigation
+- **Homepage** (`/`) — Hero, Stats, Shop (3 products + Custom Swag card), How It Works, Custom Print Quote Form, FAQ, CTA
+- **Custom Swag** (`/custom-swag`) — Builder for magnets, keychains, NFC badges, or freeform custom orders
 - **Robotics** (`/robotics`) — Coming Soon page
-- Nav: 3D Printing | Robotics (Soon badge) | Custom Print | Support
+- **Cart** (`/cart`) — Cart with coupon codes
+- **Order Success** (`/order-success`) — Post-checkout verification & confirmation
+- **Nav:** Shop | Custom Print | Robotics (Soon) | Support
 
-## Recent Changes
-- 2026-02-26: Site redesign — two main sections: 3D Printing + Robotics
-  - Added `/robotics` Coming Soon page with robot/gear/CPU icons
-  - Updated Navbar: "3D Printing" + "Robotics" (with "Soon" badge)
-  - Updated Footer: "3D Printing" column + "More" column with Robotics link
-  - Updated site title to "3D Printing & Robotics"
-  - Stats section now shows 8 categories
-- 2026-02-26: Added Swag category with 4 products (committed + deployed)
-  - Appy's Studio Swag Pack (real photo)
-  - Custom 3D Printed Keychain w/ optional NFC (placeholder image)
-  - 3D Printed Fridge Magnets (placeholder image)
-  - Custom NFC Smart Badge (placeholder image)
-- 2026-02-26: Built ProductDetailModal with image carousel (committed + deployed)
-  - Click any product card → full modal with image gallery, thumbnails, keyboard nav
-  - Framer Motion animations, responsive layout
-- 2026-02-26: Removed 'custom' from product category filter (quote form section still exists)
-- 2026-02-26: Deleted unused placeholder.svg, merged PS5 listings → 16+4=20 products
-- 2025-02-25: Made email gracefully skip when Gmail credentials not configured
-- 2025-02-25: Added 5 new products with real product photos (9 images total)
-  - Books Read This Year Tracker (decorative)
-  - LOVE Lithophane Photo Lamp (gifts - new category)
-  - Robot Apple Watch Charging Stand (functional)
-  - PS5 Dual Controller Stand (gaming - new category)
-- Added 2 new categories: Gaming, Gifts
-- Product images stored locally in /public/products/ (not Unsplash)
-- 2025-02-25: Replaced Vercel favicon with Appy's Studio purple logo
+## Products (3 items in `lib/products.ts`)
+1. **Books Read This Year Tracker** (`books-read-tracker`) — $24.99, decorative, real photo
+2. **Robot Apple Watch Charging Stand** (`robot-watch-stand`) — $19.99, functional, real photo
+3. **PS5 DualSense Controller Stand** (`ps5-controller-stand`) — $24.99, gaming, real photos (3 images)
+
+## Custom Swag Page (`/custom-swag`)
+Interactive builder with 4 swag types, each with product-specific preview:
+- **Fridge Magnet** — Thick slab preview with depth/shadow effect, $5.00
+- **Keychain** — Preview with metal ring/loop at top, $5.00
+- **NFC Badge** — Landscape card preview with NFC icon overlay, $5.00
+- **Custom** — Freeform quote form (name, email, description, optional file upload), submits to `/api/quote`
+
+Builder features: shape selector (circle/rectangle/rounded), size selector (S/M/L), image upload with drag-and-drop, live preview, add to cart.
+
+## Recent Changes (newest first)
+- 2026-02-28: Custom Swag page with product-specific previews, shop cleanup
+  - Built `/custom-swag` with Magnet/Keychain/NFC Badge/Custom builders
+  - Product-specific preview templates (depth for magnets, ring for keychains, NFC icon for badges)
+  - Trimmed catalog from 20 to 3 core products
+  - Removed category filter tabs
+  - Added Custom Swag CTA card in shop grid
+  - Updated nav: Shop | Custom Print | Robotics | Support
+- 2026-02-28: Order verification on redirect (bypass unreliable Square webhooks)
+  - Created `/api/verify-order` endpoint
+  - Modified cart to save `squareOrderId` to sessionStorage
+  - Modified success page to call verify-order on mount
+- 2026-02-28: Replaced Stripe with Square payments
+  - Square Payment Links API for hosted checkout
+  - Added coupon codes (TESTFREE, FRIENDS50)
+  - Configured Gmail email notifications
+- 2026-02-26: Site redesign — 3D Printing + Robotics sections
+- 2026-02-26: Added Swag category, ProductDetailModal with image carousel
+- 2025-02-25: 5 new products with real photos, Appy's Studio logo favicon
 - 2025-02-25: Moved production from Vercel to AWS EC2
 
 ## TODO
-- Replace placeholder images on 3 swag products (keychain, magnets, NFC badge)
-  - Instagram logo keychain w/ NFC tag photo coming
-  - Nectar brand logo NFC tag photo coming
-- Replace 12 Unsplash stock images with real product photos
-- Add multiple images per product for carousel support
-- Commit & deploy redesign (nav, footer, robotics page)
+- Replace placeholder swag product photos (Instagram keychain, Nectar NFC tag photos coming)
 - Add real robotics content when ready (currently Coming Soon)
+- Replace remaining Unsplash stock images with real product photos (hero section)
+- Add more products to catalog as they become available
 
-## Current State
-- Two-section site: 3D Printing (homepage) + Robotics (Coming Soon)
-- 20 total products across 8 categories (Organizers, Cable Mgmt, Decorative, Functional, Gaming, Gifts, Swag)
-- 5 products have real photos, 12 use Unsplash stock, 3 swag products use swag-box placeholder
-- ProductDetailModal with image carousel live in production
-- Swag products deployed to production
-- Redesign (nav/footer/robotics) built locally, not yet deployed
+## Square SDK Reference (`square` v44)
+
+### Client Init
+```typescript
+import { SquareClient, SquareEnvironment } from 'square';
+const client = new SquareClient({
+  token: process.env.SQUARE_ACCESS_TOKEN,
+  environment: process.env.SQUARE_ENVIRONMENT === 'production'
+    ? SquareEnvironment.Production : SquareEnvironment.Sandbox,
+});
+```
+
+### Key API Methods
+- **Create Payment Link:** `client.checkout.paymentLinks.create({ idempotencyKey, order, checkoutOptions, prePopulatedData })`
+- **Get Order:** `client.orders.get({ orderId })`
+- **Webhook Verify:** `await WebhooksHelper.verifySignature(body, signature, signatureKey, notificationUrl)` — must `await`, it's async
+- **Money amounts:** BigInt cents — `BigInt(Math.round(price * 100))`
+
+### Known Issues
+- Square Payment Links do NOT reliably fire `payment.updated` webhooks — this is why we use verify-on-redirect
+- 100% discount coupons create $0 orders processed as cash — no payment webhook fires
+- Two Square apps exist; production payments use app `sq0idp-w46nJ_NCNDMSOywaCY0mwA` — webhook subscription must be on this app
+- Production location ID: `L3RW8RJCN1V5J`
+- If port 3001 is stuck on deploy: `sudo fuser -k 3001/tcp` then restart service
+- Another service (freetools.us) runs on port 3000 on the same EC2 — don't disturb it
+
+## Current State (as of 2026-02-28)
+- Everything committed, pushed to GitHub, and deployed to production
+- 3 products in shop + Custom Swag builder page
+- Square payments working in production (verify-on-redirect flow)
+- Gmail notifications active (appysstudioca@gmail.com)
 - Production running on AWS EC2 with SSL at https://appysstudio.com
-- .env on server needs Square, Gmail, NextAuth credentials configured
-- Payments, email, and social login only activate when respective env vars are set
+- Server `.env` has Square production credentials, Gmail, NextAuth configured

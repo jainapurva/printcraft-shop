@@ -9,7 +9,7 @@ export interface Order {
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
-  items?: Array<{ productId: string; productName: string; quantity: number; price: number }>;
+  items?: Array<{ productId: string; productName: string; quantity: number; price: number; color?: string }>;
   totalAmount?: number;
   squarePaymentId?: string;
   status: 'pending' | 'confirmed' | 'printing' | 'shipped' | 'delivered';
