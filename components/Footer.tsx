@@ -49,7 +49,10 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-gray-600 flex flex-col sm:flex-row justify-between gap-2">
           <p>&copy; {new Date().getFullYear()} Appy's Studio. All rights reserved.</p>
-          <p>Made with precision, printed with care.</p>
+          <p>
+            <a href="https://swayat.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors">Swayat AI</a>
+            {' '}is a product of Appy&apos;s Studio.
+          </p>
         </div>
       </div>
     </footer>

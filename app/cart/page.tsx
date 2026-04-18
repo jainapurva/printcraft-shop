@@ -1,10 +1,7 @@
 'use client';
-import { useCart } from '@/context/CartContext';
-import { useSession } from 'next-auth/react';
+import { useCart, CartItem } from '@/context/CartContext';
 import Image from 'next/image';
 import Link from 'next/link';
-import { COLOR_HEX } from '@/lib/products';
-import ColorizedProductImage from '@/components/ColorizedProductImage';
 import { Truck, Trash2, Plus, Minus, ShoppingBag, CreditCard, Lock, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { trackEvent } from '@/lib/useAnalytics';
@@ -16,9 +13,23 @@ interface ShippingRate {
   estimatedDays: string;
 }
 
+function buildItemName(item: CartItem): string {
+  const parts = [item.product.name];
+  if (item.customizations?.color) {
+    parts.push(item.customizations.color.name);
+  }
+  if (item.customizations?.variant) {
+    parts.push(item.customizations.variant === 'with-divider' ? 'With Divider' : 'No Divider');
+  }
+  if (item.customizations?.customDimensions) {
+    const d = item.customizations.customDimensions;
+    parts.push(`${d.length}"×${d.width}"×${d.height}"`);
+  }
+  return parts.join(' — ');
+}
+
 export default function CartPage() {
   const { items, removeItem, updateQuantity, total, clearCart } = useCart();
-  const { data: session } = useSession();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
@@ -33,14 +44,6 @@ export default function CartPage() {
   const [coupon, setCoupon] = useState('');
   const [pendingOrder, setPendingOrder] = useState<string | null>(null);
   const zipDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (session?.user) {
-      if (session.user.email && !email) setEmail(session.user.email);
-      if (session.user.name && !name) setName(session.user.name);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
 
   // Fetch shipping rate when zip has 5 digits
   useEffect(() => {
@@ -87,7 +90,7 @@ export default function CartPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(i => ({ productName: i.product.name, price: i.product.price, quantity: i.quantity, color: i.selectedColor })),
+          items: items.map(i => ({ productName: buildItemName(i), price: i.product.price, quantity: i.quantity })),
           customerEmail: email,
           customerName: name,
           couponCode: coupon || undefined,
@@ -153,40 +156,52 @@ export default function CartPage() {
         <h1 className="text-3xl font-extrabold mb-8 text-gray-900">Your Cart</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {items.map(({ product, quantity, selectedColor }) => (
-              <div key={`${product.id}::${selectedColor || ''}`} className="bg-white rounded-2xl p-5 flex gap-4 shadow-sm border border-gray-100">
-                <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-100">
-                  <ColorizedProductImage
-                    originalSrc={product.image}
-                    transparentSrc={product.transparentImage}
-                    selectedColor={selectedColor}
-                    alt={product.name}
-                    sizes="80px"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-900 truncate">{product.name}</h3>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-gray-400 text-xs">{product.leadTime} lead time · {product.materials[0]}</p>
-                    {selectedColor && (
-                      <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-                        · <span className="w-3 h-3 rounded-full inline-block ring-1 ring-gray-200" style={{ backgroundColor: COLOR_HEX[selectedColor] || '#ccc' }} /> {selectedColor}
-                      </span>
+            {items.map((item) => {
+              const { product, quantity, customizations, cartKey } = item;
+              return (
+                <div key={cartKey} className="bg-white rounded-2xl p-5 flex gap-4 shadow-sm border border-gray-100">
+                  <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 relative bg-gray-100">
+                    <Image src={product.image} alt={product.name} fill className="object-cover" sizes="80px" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-900 truncate">{product.name}</h3>
+                    {/* Customization details */}
+                    {customizations?.color && (
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span
+                          className="w-3 h-3 rounded-full border border-gray-200 flex-shrink-0"
+                          style={{ backgroundColor: customizations.color.hex }}
+                        />
+                        <span className="text-xs text-gray-500">
+                          {customizations.color.name}
+                        </span>
+                      </div>
                     )}
+                    {customizations?.variant && (
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {customizations.variant === 'with-divider' ? 'With Divider' : 'No Divider'}
+                      </p>
+                    )}
+                    {customizations?.customDimensions && (
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {customizations.customDimensions.length}&quot;×{customizations.customDimensions.width}&quot;×{customizations.customDimensions.height}&quot; custom size
+                      </p>
+                    )}
+                    <p className="text-gray-400 text-xs mt-0.5">{product.leadTime} lead time · {product.materials[0]}</p>
+                    <div className="flex items-center gap-3 mt-3">
+                      <button onClick={() => updateQuantity(cartKey, quantity - 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Minus className="w-3.5 h-3.5" /></button>
+                      <span className="font-bold w-6 text-center text-sm">{quantity}</span>
+                      <button onClick={() => updateQuantity(cartKey, quantity + 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Plus className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => removeItem(cartKey)} className="ml-auto text-red-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 mt-3">
-                    <button onClick={() => updateQuantity(product.id, selectedColor, quantity - 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Minus className="w-3.5 h-3.5" /></button>
-                    <span className="font-bold w-6 text-center text-sm">{quantity}</span>
-                    <button onClick={() => updateQuantity(product.id, selectedColor, quantity + 1)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"><Plus className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => removeItem(product.id, selectedColor)} className="ml-auto text-red-400 hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <div className="text-right flex-shrink-0">
+                    <p className="font-extrabold text-lg text-gray-900">${(product.price * quantity).toFixed(2)}</p>
+                    <p className="text-xs text-gray-400">${product.price.toFixed(2)} each</p>
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-extrabold text-lg text-gray-900">${(product.price * quantity).toFixed(2)}</p>
-                  <p className="text-xs text-gray-400">${product.price.toFixed(2)} each</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="lg:col-span-1">

@@ -1,22 +1,37 @@
 'use client';
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Product } from '@/lib/products';
+import { Product, FilamentColor } from '@/lib/products';
+
+export interface CartItemCustomization {
+  color?: FilamentColor;
+  variant?: 'with-divider' | 'without-divider';
+  customDimensions?: { length: number; width: number; height: number };
+}
 
 export interface CartItem {
   product: Product;
   quantity: number;
-  selectedColor?: string;
+  customizations?: CartItemCustomization;
+  cartKey: string;
 }
 
-function cartKey(productId: string, color?: string) {
-  return color ? `${productId}::${color}` : productId;
+function makeCartKey(productId: string, customizations?: CartItemCustomization): string {
+  if (!customizations) return productId;
+  const parts = [productId];
+  if (customizations.color) parts.push(`${customizations.color.name}-${customizations.color.brand}`);
+  if (customizations.variant) parts.push(customizations.variant);
+  if (customizations.customDimensions) {
+    const d = customizations.customDimensions;
+    parts.push(`${d.length}x${d.width}x${d.height}`);
+  }
+  return parts.join('|');
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Product, color?: string) => void;
-  removeItem: (productId: string, color?: string) => void;
-  updateQuantity: (productId: string, color: string | undefined, quantity: number) => void;
+  addItem: (product: Product, customizations?: CartItemCustomization) => void;
+  removeItem: (cartKey: string) => void;
+  updateQuantity: (cartKey: string, quantity: number) => void;
   clearCart: () => void;
   total: number;
   itemCount: number;
@@ -27,26 +42,24 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  const addItem = useCallback((product: Product, color?: string) => {
+  const addItem = useCallback((product: Product, customizations?: CartItemCustomization) => {
     setItems(prev => {
-      const key = cartKey(product.id, color);
-      const existing = prev.find(i => cartKey(i.product.id, i.selectedColor) === key);
-      if (existing) return prev.map(i => cartKey(i.product.id, i.selectedColor) === key ? { ...i, quantity: i.quantity + 1 } : i);
-      return [...prev, { product, quantity: 1, selectedColor: color }];
+      const cartKey = makeCartKey(product.id, customizations);
+      const existing = prev.find(i => i.cartKey === cartKey);
+      if (existing) return prev.map(i => i.cartKey === cartKey ? { ...i, quantity: i.quantity + 1 } : i);
+      return [...prev, { product, quantity: 1, customizations, cartKey }];
     });
   }, []);
 
-  const removeItem = useCallback((productId: string, color?: string) => {
-    const key = cartKey(productId, color);
-    setItems(prev => prev.filter(i => cartKey(i.product.id, i.selectedColor) !== key));
+  const removeItem = useCallback((cartKey: string) => {
+    setItems(prev => prev.filter(i => i.cartKey !== cartKey));
   }, []);
 
-  const updateQuantity = useCallback((productId: string, color: string | undefined, quantity: number) => {
-    const key = cartKey(productId, color);
+  const updateQuantity = useCallback((cartKey: string, quantity: number) => {
     if (quantity <= 0) {
-      setItems(prev => prev.filter(i => cartKey(i.product.id, i.selectedColor) !== key));
+      setItems(prev => prev.filter(i => i.cartKey !== cartKey));
     } else {
-      setItems(prev => prev.map(i => cartKey(i.product.id, i.selectedColor) === key ? { ...i, quantity } : i));
+      setItems(prev => prev.map(i => i.cartKey === cartKey ? { ...i, quantity } : i));
     }
   }, []);
 

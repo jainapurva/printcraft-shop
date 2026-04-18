@@ -2,11 +2,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingCart, Clock, ChevronLeft, ChevronRight, Package, Check } from 'lucide-react';
-import { Product, COLOR_HEX } from '@/lib/products';
-import { useCart } from '@/context/CartContext';
+import { X, ShoppingCart, Clock, ChevronLeft, ChevronRight, Package, Ruler } from 'lucide-react';
+import { Product, FilamentColor } from '@/lib/products';
+import { useCart, CartItemCustomization } from '@/context/CartContext';
 import { trackEvent } from '@/lib/useAnalytics';
-import ColorizedProductImage from '@/components/ColorizedProductImage';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -17,16 +16,27 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
   const { addItem } = useCart();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>('');
+
+  // Customization state
+  const [selectedColor, setSelectedColor] = useState<FilamentColor | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<'without-divider' | 'with-divider'>('without-divider');
+  const [customSizeEnabled, setCustomSizeEnabled] = useState(false);
+  const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
 
   const images = product?.images?.length ? product.images : product ? [product.image] : [];
+  // Deduplicate colors by name (keep first occurrence — brand is internal only)
+  const uniqueColors = product?.colors?.filter((c, i, arr) => arr.findIndex(x => x.name === c.name) === i) ?? [];
+  const hasCustomizations = !!(product?.colors || product?.hasDividerOption || product?.hasCustomSize);
 
   // Reset state when product changes
   useEffect(() => {
     setSelectedImageIndex(0);
     setAddedToCart(false);
-    setSelectedColor(product?.colors?.[0] || '');
-  }, [product?.id, product?.colors]);
+    setSelectedColor(null);
+    setSelectedVariant('without-divider');
+    setCustomSizeEnabled(false);
+    setDimensions({ length: '', width: '', height: '' });
+  }, [product?.id]);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -49,10 +59,28 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const canAddToCart = !product?.colors || selectedColor !== null;
+
   const handleAddToCart = () => {
-    if (!product) return;
-    addItem(product, selectedColor || undefined);
-    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price, color: selectedColor });
+    if (!product || !canAddToCart) return;
+
+    let customizations: CartItemCustomization | undefined;
+    if (hasCustomizations) {
+      customizations = {};
+      if (selectedColor) customizations.color = selectedColor;
+      if (product.hasDividerOption) customizations.variant = selectedVariant;
+      if (product.hasCustomSize && customSizeEnabled) {
+        const l = parseFloat(dimensions.length);
+        const w = parseFloat(dimensions.width);
+        const h = parseFloat(dimensions.height);
+        if (l > 0 && w > 0 && h > 0) {
+          customizations.customDimensions = { length: l, width: w, height: h };
+        }
+      }
+    }
+
+    addItem(product, customizations);
+    trackEvent('add_to_cart', { productId: product.id, productName: product.name, price: product.price });
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
   };
@@ -98,58 +126,36 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                 <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100">
                   <AnimatePresence mode="wait">
                     <motion.div
-                      key={`${selectedImageIndex}-${selectedColor}`}
+                      key={selectedImageIndex}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
                       className="absolute inset-0"
                     >
-                      {selectedImageIndex === 0 && selectedColor && product.transparentImage ? (
-                        <ColorizedProductImage
-                          originalSrc={images[0]}
-                          transparentSrc={product.transparentImage}
-                          selectedColor={selectedColor}
-                          alt={`${product.name} in ${selectedColor}`}
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          priority
-                        />
-                      ) : (
-                        <Image
-                          src={images[selectedImageIndex]}
-                          alt={`${product.name} - Image ${selectedImageIndex + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          priority
-                        />
-                      )}
+                      <Image
+                        src={images[selectedImageIndex]}
+                        alt={`${product.name} - Image ${selectedImageIndex + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority
+                      />
                     </motion.div>
                   </AnimatePresence>
-
-                  {/* Color preview label */}
-                  {selectedImageIndex === 0 && selectedColor && product.transparentImage && (
-                    <div className="absolute top-2.5 left-2.5 z-[3] flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-white text-[11px] px-2.5 py-1 rounded-full pointer-events-none">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full ring-1 ring-white/30"
-                        style={{ backgroundColor: COLOR_HEX[selectedColor] || '#ccc' }}
-                      />
-                      Color preview
-                    </div>
-                  )}
 
                   {/* Navigation arrows */}
                   {images.length > 1 && (
                     <>
                       <button
                         onClick={prevImage}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 z-[2] w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={nextImage}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 z-[2] w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-gray-700 hover:bg-white transition-all shadow-md"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
@@ -158,7 +164,7 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
                   {/* Image counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[2] bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
                       {selectedImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -205,12 +211,120 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                 {/* Price */}
                 <div className="text-3xl font-extrabold text-gray-900 mb-4">
                   ${product.price.toFixed(2)}
+                  {product.hasCustomSize && (
+                    <span className="text-sm font-normal text-gray-400 ml-2">standard size</span>
+                  )}
                 </div>
 
                 {/* Description */}
-                <p className="text-gray-600 leading-relaxed mb-6">
+                <p className="text-gray-600 leading-relaxed mb-5">
                   {product.description}
                 </p>
+
+                {/* ── Color Picker ── */}
+                {uniqueColors.length > 0 && (
+                  <div className="mb-5">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">
+                      Color
+                      {selectedColor
+                        ? <span className="ml-2 font-normal text-gray-500">{selectedColor.name}</span>
+                        : <span className="ml-2 font-normal text-red-400">— select one</span>
+                      }
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {uniqueColors.map((color) => {
+                        const isSelected = selectedColor?.name === color.name;
+                        return (
+                          <button
+                            key={color.name}
+                            title={color.name}
+                            onClick={() => setSelectedColor(color)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${
+                              isSelected
+                                ? 'border-purple-500 ring-2 ring-purple-300 ring-offset-1 scale-110'
+                                : 'border-gray-200 hover:border-gray-400'
+                            }`}
+                            style={{ backgroundColor: color.hex }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Divider Option ── */}
+                {product.hasDividerOption && (
+                  <div className="mb-5">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2">Divider</h3>
+                    <div className="flex rounded-xl overflow-hidden border border-gray-200 text-sm font-medium w-fit">
+                      <button
+                        onClick={() => setSelectedVariant('without-divider')}
+                        className={`px-4 py-2 transition-colors ${
+                          selectedVariant === 'without-divider'
+                            ? 'bg-purple-500 text-white'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        Without Divider
+                      </button>
+                      <button
+                        onClick={() => setSelectedVariant('with-divider')}
+                        className={`px-4 py-2 transition-colors border-l border-gray-200 ${
+                          selectedVariant === 'with-divider'
+                            ? 'bg-purple-500 text-white'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        With Divider
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Custom Size ── */}
+                {product.hasCustomSize && (
+                  <div className="mb-5">
+                    <label className="flex items-center gap-2 cursor-pointer mb-2">
+                      <input
+                        type="checkbox"
+                        checked={customSizeEnabled}
+                        onChange={e => setCustomSizeEnabled(e.target.checked)}
+                        className="w-4 h-4 rounded accent-purple-500"
+                      />
+                      <span className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
+                        <Ruler className="w-4 h-4 text-purple-500" />
+                        Custom Size
+                      </span>
+                      {!customSizeEnabled && (
+                        <span className="text-xs text-gray-400">(standard: 4″×3″×2″)</span>
+                      )}
+                    </label>
+                    {customSizeEnabled && (
+                      <div className="flex gap-2 mt-1">
+                        {(['length', 'width', 'height'] as const).map(dim => (
+                          <div key={dim} className="flex-1">
+                            <label className="block text-xs text-gray-500 mb-1 capitalize">{dim} (in)</label>
+                            <input
+                              type="number"
+                              min="1"
+                              max="24"
+                              step="0.5"
+                              placeholder="0"
+                              value={dimensions[dim]}
+                              onChange={e => setDimensions(prev => ({ ...prev, [dim]: e.target.value }))}
+                              className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm text-center focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {customSizeEnabled && (
+                      <p className="text-xs text-amber-600 mt-1.5 bg-amber-50 px-3 py-1.5 rounded-lg">
+                        Custom sizes may vary in price — we&apos;ll confirm before processing.
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Features */}
                 <div className="mb-6">
@@ -237,34 +351,6 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
                   </span>
                 </div>
 
-                {/* Color picker */}
-                {product.colors?.length > 0 && (
-                  <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                      Color{selectedColor && <span className="font-normal text-gray-500"> — {selectedColor}</span>}
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {product.colors.map(color => (
-                        <button
-                          key={color}
-                          onClick={() => setSelectedColor(color)}
-                          title={color}
-                          className={`w-9 h-9 rounded-full transition-all flex items-center justify-center ${
-                            selectedColor === color
-                              ? 'ring-2 ring-purple-500 ring-offset-2 scale-110'
-                              : 'hover:scale-110 ring-1 ring-gray-200'
-                          }`}
-                          style={{ backgroundColor: COLOR_HEX[color] || '#ccc' }}
-                        >
-                          {selectedColor === color && (
-                            <Check className={`w-4 h-4 ${['White', 'Marble', 'Pink Light', 'Pastel Green', 'Yellow'].includes(color) ? 'text-gray-700' : 'text-white'}`} strokeWidth={3} />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
                 {/* Stock status */}
                 <div className="mb-6">
                   {product.inStock ? (
@@ -282,13 +368,16 @@ export default function ProductDetailModal({ product, onClose }: ProductDetailMo
 
                 {/* Add to Cart */}
                 <div className="mt-auto pt-4 border-t border-gray-100">
+                  {product.colors && !selectedColor && (
+                    <p className="text-xs text-red-400 mb-2 text-center">Please select a color to continue</p>
+                  )}
                   <button
                     onClick={handleAddToCart}
-                    disabled={!product.inStock}
+                    disabled={!product.inStock || !canAddToCart}
                     className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-semibold text-base transition-all active:scale-[0.98] ${
                       addedToCart
                         ? 'bg-green-500 text-white shadow-lg shadow-green-500/25'
-                        : product.inStock
+                        : product.inStock && canAddToCart
                           ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30'
                           : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     }`}

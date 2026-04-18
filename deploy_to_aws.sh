@@ -124,6 +124,7 @@ echo "  Syncing .next/standalone/..."
 rsync -az --delete \
     --exclude='data/' \
     --exclude='.env' \
+    --exclude='public/uploads/' \
     -e "ssh -i $SSH_KEY" \
     .next/standalone/ "$AWS_USER@$AWS_HOST:$REMOTE_DIR/" || {
     RC=$?

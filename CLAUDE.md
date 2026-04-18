@@ -80,10 +80,16 @@ All optional for local dev (features gracefully degrade):
 - **Order Success** (`/order-success`) — Post-checkout verification & confirmation
 - **Nav:** Shop | Custom Print | Robotics (Soon) | Support
 
-## Products (3 items in `lib/products.ts`)
-1. **Books Read This Year Tracker** (`books-read-tracker`) — $24.99, decorative, real photo
-2. **Robot Apple Watch Charging Stand** (`robot-watch-stand`) — $19.99, functional, real photo
-3. **PS5 DualSense Controller Stand** (`ps5-controller-stand`) — $24.99, gaming, real photos (3 images)
+## Products (5 items in `lib/products.ts`)
+1. **Stackable Organizer Box** (`stackable-organizer-box`) — $12.99, functional, new-product-1.jpg
+   - Color picker: 10 Elegoo PLA + 12 Sunlu PLA colors (brand toggle in modal)
+   - Divider option: with/without
+   - Custom size: L×W×H in inches (checkbox reveals inputs; standard is 4″×3″×2″)
+   - `colors`, `hasDividerOption`, `hasCustomSize` fields on Product
+2. **Books Read This Year Tracker** (`books-read-tracker`) — $9.99, decorative, real photo
+3. **Robot Apple Watch Charging Stand** (`robot-watch-stand`) — $9.99, functional, real photo
+4. **PS5 DualSense Controller Stand** (`ps5-controller-stand`) — $9.99, gaming, real photos (3 images)
+5. **Multi-Compartment Desk Organizer** (`desk-organizer`) — $9.99, functional, real photos (3 images)
 
 ## Custom Swag Page (`/custom-swag`)
 Interactive builder with 4 swag types, each with product-specific preview:
@@ -94,7 +100,21 @@ Interactive builder with 4 swag types, each with product-specific preview:
 
 Builder features: shape selector (circle/rectangle/rounded), size selector (S/M/L), image upload with drag-and-drop, live preview, add to cart.
 
+## Customizable Products Architecture
+- `Product` interface has optional `colors?: FilamentColor[]`, `hasDividerOption?`, `hasCustomSize?`
+- `CartItemCustomization` in `CartContext.tsx`: `{ color?, variant?, customDimensions? }`
+- `CartItem.cartKey` = composite key (`productId|color-brand|variant|LxWxH`) for deduplication
+- `addItem(product, customizations?)` — `removeItem(cartKey)` — `updateQuantity(cartKey, qty)`
+- `buildItemName(item)` in cart page builds descriptive name for Square checkout (e.g. "Box — White (Elegoo) — With Divider — 6"×4"×3"")
+- Custom size shows amber warning: "may vary in price — we'll confirm before processing"
+
 ## Recent Changes (newest first)
+- 2026-03-02: Added Stackable Organizer Box product with full customization UI
+  - Color picker with Elegoo (10 colors) / Sunlu (12 colors) brand toggle
+  - With/without divider toggle
+  - Custom size (L×W×H) inputs with standard size fallback (4″×3″×2″)
+  - Cart shows color swatch + all customizations per item
+  - CartContext refactored to support per-item customizations via cartKey
 - 2026-02-28: Custom Swag page with product-specific previews, shop cleanup
   - Built `/custom-swag` with Magnet/Keychain/NFC Badge/Custom builders
   - Product-specific preview templates (depth for magnets, ring for keychains, NFC icon for badges)
@@ -120,6 +140,7 @@ Builder features: shape selector (circle/rectangle/rounded), size selector (S/M/
 - Add real robotics content when ready (currently Coming Soon)
 - Replace remaining Unsplash stock images with real product photos (hero section)
 - Add more products to catalog as they become available
+- Add shipping cost calculation (options: flat rate ~$3, bake into price, or USPS API for real rates). Products ~500g/1.1lb, USPS Ground Advantage ~$4-9 depending on zone
 
 ## Square SDK Reference (`square` v44)
 

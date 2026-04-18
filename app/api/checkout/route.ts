@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
     const { items, customerEmail, customerName, couponCode, shippingCost, shippingLabel, shippingAddress } = await req.json();
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
-    const lineItems = items.map((item: { productName: string; price: number; quantity: number; color?: string }) => ({
-      name: item.color ? `${item.productName} - ${item.color}` : item.productName,
+    const lineItems = items.map((item: { productName: string; price: number; quantity: number }) => ({
+      name: item.productName,
       quantity: String(item.quantity),
       basePriceMoney: {
         amount: BigInt(Math.round(item.price * 100)),

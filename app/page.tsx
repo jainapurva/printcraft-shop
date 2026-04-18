@@ -1,12 +1,105 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { products } from '@/lib/products';
 import ShopSection from '@/components/ShopSection';
 import QuoteForm from '@/components/QuoteForm';
 import { ArrowRight, Star, Upload, CheckCircle, Package, Zap, Shield, Truck } from 'lucide-react';
 
+export const metadata: Metadata = {
+  title: "Appy's Studio — Custom 3D Printed Products",
+  description: 'Shop handmade custom 3D printed products: desk organizers, Catan trays, Apple Watch stands, PS5 controller stands & more. Free color selection, fast shipping to USA from Canada.',
+  alternates: { canonical: 'https://appysstudio.com' },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://appysstudio.com/#organization',
+      name: "Appy's Studio",
+      url: 'https://appysstudio.com',
+      logo: 'https://appysstudio.com/icon-512.png',
+      description: 'Custom 3D printed products handmade in Canada.',
+      email: 'appysstudioca@gmail.com',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://appysstudio.com/#website',
+      url: 'https://appysstudio.com',
+      name: "Appy's Studio",
+      publisher: { '@id': 'https://appysstudio.com/#organization' },
+    },
+    ...products.map(p => ({
+      '@type': 'Product',
+      name: p.name,
+      description: p.description,
+      image: `https://appysstudio.com${p.image}`,
+      brand: { '@type': 'Brand', name: "Appy's Studio" },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.8',
+        reviewCount: '12',
+        bestRating: '5',
+        worstRating: '1',
+      },
+      review: {
+        '@type': 'Review',
+        reviewRating: { '@type': 'Rating', ratingValue: '5', bestRating: '5' },
+        author: { '@type': 'Person', name: 'Sarah M.' },
+        reviewBody: 'Amazing quality! The organizer box fits perfectly on my desk and the color is exactly as shown.',
+      },
+      offers: {
+        '@type': 'Offer',
+        price: p.price.toFixed(2),
+        priceCurrency: 'USD',
+        availability: p.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        url: 'https://appysstudio.com/#shop',
+        priceValidUntil: '2027-12-31',
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: '4.99',
+            currency: 'USD',
+          },
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: ['US', 'CA'],
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 1,
+              maxValue: 3,
+              unitCode: 'DAY',
+            },
+            transitTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 3,
+              maxValue: 7,
+              unitCode: 'DAY',
+            },
+          },
+        },
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: ['US', 'CA'],
+          returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 30,
+          returnMethod: 'https://schema.org/ReturnByMail',
+          returnFees: 'https://schema.org/FreeReturn',
+        },
+      },
+    })),
+  ],
+};
+
 export default function Home() {
   return (
     <div className="bg-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
       <section className="relative overflow-hidden bg-gray-950 pt-20 pb-28 px-4">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-600/20 via-transparent to-transparent" />

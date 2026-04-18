@@ -4,6 +4,7 @@ import Link from 'next/link';
 export const metadata = {
   title: "Robotics — Coming Soon | Appy's Studio",
   description: '3D printed robots and robotic components. Coming soon from Appy\'s Studio.',
+  alternates: { canonical: 'https://appysstudio.com/robotics' },
 };
 
 export default function RoboticsPage() {

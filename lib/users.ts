@@ -12,6 +12,8 @@ export interface UserProfile {
   phone?: string;
   address?: string;
   watchlist: string[]; // product IDs
+  freeGenerationsUsed: number; // 0-2 lifetime free AI generations
+  aiCredits: number;           // paid credits remaining
   createdAt: string;
   updatedAt: string;
 }
@@ -44,6 +46,9 @@ export function upsertUser(data: { email: string; name: string; image?: string; 
   if (existing) {
     existing.name = data.name || existing.name;
     existing.image = data.image || existing.image;
+    // Migrate old users missing credit fields
+    if (existing.freeGenerationsUsed === undefined) existing.freeGenerationsUsed = 0;
+    if (existing.aiCredits === undefined) existing.aiCredits = 0;
     existing.updatedAt = new Date().toISOString();
     saveDB(db);
     return existing;
@@ -56,6 +61,8 @@ export function upsertUser(data: { email: string; name: string; image?: string; 
     image: data.image,
     provider: data.provider,
     watchlist: [],
+    freeGenerationsUsed: 0,
+    aiCredits: 0,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -91,4 +98,56 @@ export function toggleWatchlistItem(email: string, productId: string): string[] 
   user.updatedAt = new Date().toISOString();
   saveDB(db);
   return user.watchlist;
+}
+
+/** Returns free + paid credit info for a user */
+export function getAiCreditInfo(email: string): { freeRemaining: number; paidCredits: number; totalRemaining: number } | null {
+  const user = findUserByEmail(email);
+  if (!user) return null;
+  const freeRemaining = Math.max(0, 2 - (user.freeGenerationsUsed ?? 0));
+  const paidCredits = user.aiCredits ?? 0;
+  return { freeRemaining, paidCredits, totalRemaining: freeRemaining + paidCredits };
+}
+
+/**
+ * Deducts one AI generation credit. Returns 'free' | 'paid' | 'none'
+ * 'free' = used a free generation, 'paid' = used paid credit, 'none' = no credits
+ */
+export function deductAiCredit(email: string): 'free' | 'paid' | 'none' {
+  const db = getDB();
+  const user = db.users.find(u => u.email === email);
+  if (!user) return 'none';
+
+  if ((user.freeGenerationsUsed ?? 0) < 2) {
+    user.freeGenerationsUsed = (user.freeGenerationsUsed ?? 0) + 1;
+    user.updatedAt = new Date().toISOString();
+    saveDB(db);
+    return 'free';
+  }
+
+  if ((user.aiCredits ?? 0) > 0) {
+    user.aiCredits = (user.aiCredits ?? 0) - 1;
+    user.updatedAt = new Date().toISOString();
+    saveDB(db);
+    return 'paid';
+  }
+
+  return 'none';
+}
+
+/** Add paid credits to user after successful purchase. Returns null if already processed (idempotent). */
+export function addAiCreditsForOrder(email: string, amount: number, squareOrderId: string): UserProfile | 'already_processed' | null {
+  const db = getDB();
+  const user = db.users.find(u => u.email === email) as UserProfile & { processedCreditOrders?: string[] } | undefined;
+  if (!user) return null;
+
+  // Idempotency check
+  if (!user.processedCreditOrders) user.processedCreditOrders = [];
+  if (user.processedCreditOrders.includes(squareOrderId)) return 'already_processed';
+
+  user.aiCredits = (user.aiCredits ?? 0) + amount;
+  user.processedCreditOrders.push(squareOrderId);
+  user.updatedAt = new Date().toISOString();
+  saveDB(db);
+  return user;
 }
