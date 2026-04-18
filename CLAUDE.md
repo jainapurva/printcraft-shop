@@ -1,5 +1,12 @@
 # Appy's Studio - 3D Printing & Robotics
 
+> ## ⚠️ This repo is archived — migrated 2026-04-18
+>
+> All future work on appysstudio.com happens in **`jainapurva/appysstudio-website`**.
+> This project directory and repo are kept read-only for history. Do not push here.
+>
+> Local clone of the new repo: `/home/ddarji/dhruvil/storage/git/appysstudio-website/`
+
 ## Project Overview
 E-commerce website for Appy's Studio — 3D printing & robotics. Built with Next.js 16 + TypeScript, deployed on AWS EC2.
 

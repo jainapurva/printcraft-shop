@@ -1,3 +1,16 @@
+> # ⚠️ This repo is archived
+>
+> **Migrated to `jainapurva/appysstudio-website` on 2026-04-18.**
+>
+> All future work on appysstudio.com happens in the new repo. This repo is
+> kept read-only for history only — do not push here.
+>
+> - **New canonical repo:** https://github.com/jainapurva/appysstudio-website
+> - **Production site:** https://appysstudio.com
+> - **Deploy:** push a `deploy-*` tag to the new repo (GitHub Actions → EC2)
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
